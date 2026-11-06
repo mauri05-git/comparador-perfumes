@@ -1,0 +1,3147 @@
+[
+  {
+    "id": "knasta-giorgio-armani-my-way-ylang",
+    "nombre": "My Way Ylang",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 72990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80082377_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80082388/Perfume-Mujer-My-Way-Ylang-Eau-De-Parfum-30ml-Giorgio-Armani",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-power-of-you",
+    "nombre": "Power Of You",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 62990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80711336_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80711310/perfume-mujer-power-of-you-eau-de-parfum-30ml-giorgio-armani",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-because-it-s-you",
+    "nombre": "Because It's You",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 89990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/5822061_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/5822061/perfume-mujer-giorgio-armani-because-it-s-you-eau-de-parfum-50ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-s-passione",
+    "nombre": "Sí Passione",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 77990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/6341174_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/6341171/Perfume-Mujer-Si-Passione-Eau-de-Parfum-30ml-Giorgio-Armani",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-my-way",
+    "nombre": "My Way",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 72990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/15001323_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/15001321/perfume-mujer-giorgio-armani-my-way-eau-de-parfum-30ml-citrico",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-my-way-sunny-vanilla",
+    "nombre": "My Way Sunny Vanilla",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 72990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80711340_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80711335/perfume-mujer-my-way-sunny-vanilla-eau-de-parfum-30ml-giorgio-armani",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-prada-infusion-d-ylang",
+    "nombre": "Infusion d'Ylang",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 182990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50387939_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50387939/Perfume-Infusion-d'Ylang-Eau-de-Parfum-100ml-Prada",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-s-parfum",
+    "nombre": "Sì Parfum",
+    "subtitulo": "Parfum · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 89990,
+    "ml": 30,
+    "concentracion": "Parfum / Elixir",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 11,
+    "proyeccion": "Bestia",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80578391_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80578378/Perfume-Mujer-Si-Parfum-30ml-Giorgio-Armani",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-s-passione-eclat",
+    "nombre": "Sì Passione Eclat",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 77990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50046687_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50046687/Perfume-Mujer-Si-Passione-Eclat-Eau-de-Parfum-30ml-Giorgio-Armani",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-giorgio-armani-pivoine-suzhou-armani-priv",
+    "nombre": "Pivoine Suzhou (Armani Privé)",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Giorgio Armani",
+    "precioReferencia": 252990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50063591_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50063591/perfume-mujer-de-giorgio-armani-pivoine-eau-de-toilette-100ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-dior-addict-peachy-glow",
+    "nombre": "Addict Peachy Glow",
+    "subtitulo": "Eau · Falabella",
+    "marca": "Dior",
+    "precioReferencia": 108000,
+    "ml": null,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80716739_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80716692/perfume-mujer-dior-addict-peachy-glow-eau-de-parfum-con-notas-de-jazmin-y-durazno",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-chanel-coco-mademoiselle",
+    "nombre": "Coco Mademoiselle",
+    "subtitulo": "Eau · Falabella",
+    "marca": "Chanel",
+    "precioReferencia": 171000,
+    "ml": null,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Bergamota / Limón",
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Bergamota",
+      "Cítricos",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "limonene",
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80800132_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80800132/coco-mademoiselle-crush-absolu-eau-de-parfum-vaporizador",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-rabanne-olymp-a-absolu",
+    "nombre": "Olympéa Absolu",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Rabanne",
+    "precioReferencia": 79990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80143530_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80143534/PR-OLYMPEA-RE-2025-ABSOLU-30ML",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-divine",
+    "nombre": "Divine",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 79990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50268625_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50268625/Perfume-Mujer-Divine-EDP-30-Ml-Jean-Paul-Gaultier",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-carolina-herrera-good-girl",
+    "nombre": "Good Girl",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Carolina Herrera",
+    "precioReferencia": 113990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Chocolate / Cacao",
+      "Madera (Cedro / Sándalo / Oud)",
+      "Café / Espresso",
+      "Vainilla / Haba Tonka",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Cacao",
+      "Praliné",
+      "Madera de Cedro",
+      "Sándalo"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/5157439_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/5157439/Perfume-Mujer-Good-Girl-Edp-50Ml-Carolina-Herrera",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-scandal-absolu",
+    "nombre": "Scandal Absolu",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 89990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Caramelo / Miel"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Caramelo",
+      "Miel"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80018611_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80018611/Perfume-Mujer-Jean-Paul-Gaultier-Scandal-Absolu-Edp-30-Ml-Jean-Paul-Gaultier",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-rabanne-olympea",
+    "nombre": "Olympea",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Rabanne",
+    "precioReferencia": 68990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/6229483_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/4414700/Perfume-Mujer-Olympea-Edp-30Ml-Rabanne",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-carolina-herrera-goodgirl",
+    "nombre": "Goodgirl",
+    "subtitulo": "Eau · 150ml · Falabella",
+    "marca": "Carolina Herrera",
+    "precioReferencia": 185990,
+    "ml": 150,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa",
+      "Acorde Frutal"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/50173239_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50173239/Perfume-Mujer-Goodgirl-Edp-150Ml-Carolina-Herrera",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-la-belle",
+    "nombre": "La Belle",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 78990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/7974832_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/7974832/Perfume-Mujer-La-Belle-EDP-30ml-Jean-Paul-Gaultier",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-carolina-herrera-good-girl-jasmine-absolute",
+    "nombre": "Good Girl Jasmine Absolute",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Carolina Herrera",
+    "precioReferencia": 81990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Chocolate / Cacao",
+      "Madera (Cedro / Sándalo / Oud)",
+      "Café / Espresso",
+      "Vainilla / Haba Tonka",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Cacao",
+      "Praliné",
+      "Madera de Cedro",
+      "Sándalo"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80726367_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80726421/perfume-mujer-good-girl-jasmine-absolute-eau-de-parfum-30-ml-carolina-herrera",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-rabanne-olympea-absolu",
+    "nombre": "Olympea Absolu",
+    "subtitulo": "Eau · 80ml · Falabella",
+    "marca": "Rabanne",
+    "precioReferencia": 153990,
+    "ml": 80,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/155011749_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/155011748/rabanne-olympea-absolu-80ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-rabanne-lady-million",
+    "nombre": "Lady Million",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Rabanne",
+    "precioReferencia": 86990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/155010729_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/155010728/rabanne-lady-million-edp-50ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-classique",
+    "nombre": "Classique",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 110990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/156031230_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/156032646/jean-paul-gaultier-classique-edt-100ml-mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-la-belle-rosea",
+    "nombre": "La Belle Rosea",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 87990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80695599_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80695599/perfume-mujer-la-belle-rosea-edp-30-ml-jean-paul-gaultier",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-gaultier-divine-le-parfum",
+    "nombre": "Gaultier Divine Le Parfum",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 124990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80021778_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80021778/Perfume-Mujer-Gaultier-Divine-Le-Parfum-EDP-50-Ml-Jean-Paul-Gaultier",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-carolina-herrera-ch-swing",
+    "nombre": "CH Swing",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Carolina Herrera",
+    "precioReferencia": 99390,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa",
+      "Acorde Frutal"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80726420_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80726420/perfume-mujer-ch-swing-edicion-limitada-eau-de-parfum-100-ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-le-beau-narcisse",
+    "nombre": "Le Beau Narcisse",
+    "subtitulo": "Eau · 75ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 109590,
+    "ml": 75,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Masculino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Acorde Frutal",
+      "Manzana / Pera"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/155296057_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/155296056/jean-paul-gaultier-le-beau-narcisse-edp-75ml-hombre",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-rabanne-olymp-a-parfum",
+    "nombre": "Olympéa Parfum",
+    "subtitulo": "Parfum · 30ml · Falabella",
+    "marca": "Rabanne",
+    "precioReferencia": 79990,
+    "ml": 30,
+    "concentracion": "Parfum / Elixir",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 11,
+    "proyeccion": "Bestia",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50369055_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50369055/Perfume-Mujer-Olympea-Parfum-30ML-Rabanne",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-divine-couture",
+    "nombre": "Divine Couture",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 147990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80695601_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80695601/jpg-divine-cout-re26-edp-100ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-prada-infusion-de-rose",
+    "nombre": "Infusion de Rose",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 182990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50387932_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50387932/Perfume-Infusion-de-Rose-Eau-de-Parfum-100ml-Prada",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-valentino-born-in-roma-donna",
+    "nombre": "Born In Roma Donna",
+    "subtitulo": "Eau · 10ml · Falabella",
+    "marca": "Valentino",
+    "precioReferencia": 29990,
+    "ml": 10,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Vainilla / Haba Tonka"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80727192_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80807094/perfume-mujer-bir-purple-donna-v-edp-10ml-fg-valentino",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-prada-paradoxe-virtual-flower",
+    "nombre": "Paradoxe Virtual Flower",
+    "subtitulo": "Eau · 90ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 87990,
+    "ml": 90,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80130434_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80130417/PR-PARADOXE-FLORAL-B30ML-MV",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-valentino-donna",
+    "nombre": "Donna",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Valentino",
+    "precioReferencia": 144990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/15109053_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/15109053/Perfume-Mujer-Donna-EDP-100-ml-Valentino",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-prada-paradoxe",
+    "nombre": "Paradoxe",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 124990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/50387908_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50387914/Perfume-Mujer-Paradoxe-Eau-de-Parfum-50ml-Prada",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-prada-paradoxe-sweet-chemistry",
+    "nombre": "Paradoxe Sweet Chemistry",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 87990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80834196_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80834203/prada-paradoxe-eau-de-parfum-set-30-ml-spray-de-viaje",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-prada-candy",
+    "nombre": "Candy",
+    "subtitulo": "Eau · 30ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 87990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50387928_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50387928/Perfume-Mujer-Candy-Eau-de-Parfum-30ml-Prada",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-valentino-donna-exclusivo",
+    "nombre": "Donna Exclusivo",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Valentino",
+    "precioReferencia": 101990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/15109050_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/15109050/Perfume-Mujer-Donna-EDP-50-ml-Valentino",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-versace-bright-crystal",
+    "nombre": "Bright Crystal",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Versace",
+    "precioReferencia": 98990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Bergamota / Limón",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Bergamota",
+      "Cítricos",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "limonene",
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80028978_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/1815670/Perfume-Mujer-Bright-Crystal-EDT-50-ml-Versace",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-prada-de-infusion-de-c-dre",
+    "nombre": "De Infusion De Cédre",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Prada",
+    "precioReferencia": 182990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/50387937_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50387937/Perfume-Infusion-de-Cedre-Eau-de-Parfum-100ml-Prada",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-versace-bright-crystal-parfum",
+    "nombre": "Bright Crystal Parfum",
+    "subtitulo": "Parfum · 90ml · Falabella",
+    "marca": "Versace",
+    "precioReferencia": 161990,
+    "ml": 90,
+    "concentracion": "Parfum / Elixir",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Bergamota / Limón",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Bergamota",
+      "Cítricos",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 11,
+    "proyeccion": "Bestia",
+    "alergenosIds": [
+      "limonene",
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80028979_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80028979/Perfume-Mujer-Bright-Crystal-Parfum-90-ml-Versace",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-burberry-her",
+    "nombre": "Her",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 97990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa",
+      "Acorde Frutal"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/154591358_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/149527961/PERFUME-BURBERRY-HER-DAMA-EDP-100-ML",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-burberry-for-women-classic",
+    "nombre": "For Women Classic",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 52900,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/154448983_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/154448982/burberry-for-women-classic-edp-100-ml-nuevo-envase",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-burberry-her-parfum",
+    "nombre": "Her Parfum",
+    "subtitulo": "Parfum · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 179990,
+    "ml": null,
+    "concentracion": "Parfum / Elixir",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa",
+      "Acorde Frutal"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 11,
+    "proyeccion": "Bestia",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80742776_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80742776/burberry-her-parfum-para-mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-burberry-classico",
+    "nombre": "Classico",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 40990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/130659178_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/130659177/Perfume-Burberry-Classico-edt-100ml-Hombre",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-burberry-classic-women",
+    "nombre": "Classic Women",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 64980,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/154573778_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/154573777/burberry-classic-mujer-edp-100-ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-burberry-touch",
+    "nombre": "Touch",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 89990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/117816348_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/117816346/Perfume-Touch-100ml-Edt-Hombre-Burberry",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-burberry-goddess-parfum",
+    "nombre": "Goddess Parfum",
+    "subtitulo": "Parfum · 50ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 187990,
+    "ml": 50,
+    "concentracion": "Parfum / Elixir",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Lavanda / Menta"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Lavanda",
+      "Menta Fresca"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 11,
+    "proyeccion": "Bestia",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80618053_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80618067/Perfume-Mujer-Goddess-Parfum-50Ml-Burberry",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-burberry-classic",
+    "nombre": "Classic",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 48990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/127001696_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/127001694/Burberry-Classic-Edp-100ml-Mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-hugo-boss-hugo-femme",
+    "nombre": "Hugo Femme",
+    "subtitulo": "Eau · 75ml · Falabella",
+    "marca": "Hugo Boss",
+    "precioReferencia": 59900,
+    "ml": 75,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/123928198_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/123928196/HUGO-FEMME-EDP-75-ML.",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-burberry-hero",
+    "nombre": "Hero",
+    "subtitulo": "Eau · 50ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 129990,
+    "ml": 50,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)",
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo",
+      "Jazmín",
+      "Iris"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/50227628_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/50227628/Perfume-Hombre-Burberry-Hero-Eau-de-Toilette-50-Ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-burberry-her-intense",
+    "nombre": "Her Intense",
+    "subtitulo": "Eau · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 169990,
+    "ml": null,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa",
+      "Acorde Frutal"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80103608_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80103579/burberry-her-eau-de-parfum-intense-para-mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-burberry-goddess",
+    "nombre": "Goddess",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 179990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Lavanda / Menta"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Lavanda",
+      "Menta Fresca"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/149271550_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/149271549/Burberry-Goddess-EDP-100-ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-hugo-boss-boss-femme",
+    "nombre": "Boss Femme",
+    "subtitulo": "Eau · 75ml · Falabella",
+    "marca": "Hugo Boss",
+    "precioReferencia": 54990,
+    "ml": 75,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/80725742_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80725742/perfume-mujer-boss-femme-edp-75-ml-hugo-boss",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-hugo-boss-ma-vie",
+    "nombre": "Ma Vie",
+    "subtitulo": "Eau · 75ml · Falabella",
+    "marca": "Hugo Boss",
+    "precioReferencia": 39990,
+    "ml": 75,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/153375873_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/153375872/hugo-boss-ma-vie-edp-75-ml-mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-burberry-london-floral",
+    "nombre": "London Floral",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 43990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/117816358_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/117816356/Perfume-Burberry-London-EDP-100ml-Mujer-Fragancia-Floral",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-burberry-my-blush",
+    "nombre": "My Blush",
+    "subtitulo": "Eau · 90ml · Falabella",
+    "marca": "Burberry",
+    "precioReferencia": 115890,
+    "ml": 90,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/156990638_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/156990637/burberry-my-burberry-blush-edp-90ml-mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-calvin-klein-eternity-for-women",
+    "nombre": "Eternity For Women",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Calvin Klein",
+    "precioReferencia": 69990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/157558347_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/157558344/eternity-for-women-edp-100-ml-calvin-klein",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-the-one",
+    "nombre": "The One",
+    "subtitulo": "Eau · 75ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 122990,
+    "ml": 75,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/2255243_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/139532800/perfumes-dolce-gabbana-the-one-para-mujer-75ml-edp",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-the-one-for-men",
+    "nombre": "The One For Men",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 112990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Masculino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/139001374_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/139001373/perfume-the-one-100-ml-for-men-edp-dolce-gabbana",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-k-parfum",
+    "nombre": "K Parfum",
+    "subtitulo": "Parfum · 50ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 81990,
+    "ml": 50,
+    "concentracion": "Parfum / Elixir",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 11,
+    "proyeccion": "Bestia",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/149451249_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/149451242/Dolce-Gabbana-K-Parfum-50ML",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-devotion",
+    "nombre": "Devotion",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 112990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/152179783_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/152179782/perfumes-dolce-gabbana-devotion-edp-100-ml-mujer",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-pour-femme",
+    "nombre": "Pour Femme",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 74990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/133734027_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/133734026/Dolce-Gabbana-Pour-Femme-EDT-100ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-light-blue-pour-homme",
+    "nombre": "Light Blue Pour Homme",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 149990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Masculino",
+    "familia": "Cítrico / Acuático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)",
+      "Bergamota / Limón",
+      "Notas Marinas"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo",
+      "Bergamota",
+      "Cítricos"
+    ],
+    "estaciones": [
+      "Verano",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "limonene"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80734850_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80734850/perfume-hombre-light-blue-pour-homme-edp-100-ml-dolce-gabbana",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-light-blue",
+    "nombre": "Light Blue",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 159990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Cítrico / Acuático",
+    "notas": [
+      "Bergamota / Limón",
+      "Notas Marinas"
+    ],
+    "notasDetalle": [
+      "Bergamota",
+      "Cítricos",
+      "Brisa Marina",
+      "Acorde Acuático"
+    ],
+    "estaciones": [
+      "Verano",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "limonene"
+    ],
+    "imagen": "https://media.falabella.com/falabellaCL/80734848_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/80734848/perfume-mujer-light-blue-edt-100-ml-dolce-gabbana",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-ralph-lauren-ralph",
+    "nombre": "Ralph",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Ralph Lauren",
+    "precioReferencia": 64990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/12587841_1/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/12587841/Perfume-Mujer-Ralph-EDT-100ml-Ralph-Lauren",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-q-by-dolce-gabbana",
+    "nombre": "Q by Dolce & Gabbana",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 112990,
+    "ml": 100,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/151646772_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/151646771/perfumes-q-by-dolce-gabbana-edp-100-ml-dolce-gabbana",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-pour-homme",
+    "nombre": "Pour Homme",
+    "subtitulo": "Eau · 200ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 86990,
+    "ml": 200,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/131498044_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/131400029/Dolce-Gabbana-Pour-Homme-EDT-200ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-dolce-gabbana-k-men",
+    "nombre": "K Men",
+    "subtitulo": "Eau · 100ml · Falabella",
+    "marca": "Dolce & Gabbana",
+    "precioReferencia": 58990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "https://media.falabella.com/falabellaCL/131399891_01/public",
+    "tiendaMejorPrecio": "Falabella",
+    "urlMejorPrecio": "https://www.falabella.com/falabella-cl/product/131399890/Dolce-Gabbana-K-EDT-100ml-Men",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-scandal-le-parfum",
+    "nombre": "Scandal Le Parfum",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 81990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Caramelo / Miel"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Caramelo",
+      "Miel"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "coumarin"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/perfumes-perfumes-de-mujer-scandal-le-parfum-eau-de-parfum-30ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-lanc-me-la-nuit-tr-sor",
+    "nombre": "La Nuit Trésor",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Lancôme",
+    "precioReferencia": 69990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/la-nuit-tresor-eau-de-parfum-30-ml-lcm-31516",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-lanc-me-tr-sor",
+    "nombre": "Trésor",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Lancôme",
+    "precioReferencia": 75990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/tresor-eau-de-parfum-30-ml-lcm-03490",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-lanc-me-id-le",
+    "nombre": "Idôle",
+    "subtitulo": "Eau · 25ml · DBS Beauty Store",
+    "marca": "Lancôme",
+    "precioReferencia": 56990,
+    "ml": 25,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Floral / Frutal",
+    "notas": [
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Jazmín",
+      "Iris",
+      "Rosa"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/idole-eau-de-parfum-25-ml-lcm-63963",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-scandal-pour-homme-le-parfum-for-him",
+    "nombre": "Scandal Pour Homme Le Parfum For Him",
+    "subtitulo": "Eau · 50ml · DBS Beauty Store",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 111990,
+    "ml": 50,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Masculino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)",
+      "Vainilla / Haba Tonka",
+      "Caramelo / Miel"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo",
+      "Vainilla Bourbon",
+      "Haba Tonka"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "coumarin"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/perfumes-perfumes-de-hombre-scandal-pour-homme-le-parfum-for-him-eau-de-parfum-50ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-lanc-me-la-vie-est-belle",
+    "nombre": "La Vie Est Belle",
+    "subtitulo": "Eau · 75ml · DBS Beauty Store",
+    "marca": "Lancôme",
+    "precioReferencia": 133990,
+    "ml": 75,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Femenino",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Chocolate / Cacao",
+      "Caramelo / Miel",
+      "Jazmín / Rosa / Iris"
+    ],
+    "notasDetalle": [
+      "Cacao",
+      "Praliné",
+      "Caramelo",
+      "Miel"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/la-vie-est-belle-eau-de-parfum-75-ml-lcm-61283",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-versace-versace-man-eau-fra-che",
+    "nombre": "Versace Man Eau Fraîche",
+    "subtitulo": "Eau · 50ml · DBS Beauty Store",
+    "marca": "Versace",
+    "precioReferencia": 50390,
+    "ml": 50,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Bergamota / Limón"
+    ],
+    "notasDetalle": [
+      "Bergamota",
+      "Cítricos"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "limonene"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/versace-man-eau-fraiche-edt-50-ml-vr-50002",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-moschino-moschino-toy-2-bubble-gum",
+    "nombre": "Moschino Toy 2 Bubble Gum",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Moschino",
+    "precioReferencia": 49990,
+    "ml": 30,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/moschino-toy-2-bubble-gum-edt-30-ml-mos-86406",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#831843",
+      "secundario": "#500724",
+      "acento": "#f472b6",
+      "forma": "esfera"
+    }
+  },
+  {
+    "id": "knasta-ralph-lauren-polo-red",
+    "nombre": "Polo Red",
+    "subtitulo": "Eau · 75ml · DBS Beauty Store",
+    "marca": "Ralph Lauren",
+    "precioReferencia": 99990,
+    "ml": 75,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)",
+      "Bergamota / Limón"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo",
+      "Bergamota",
+      "Cítricos"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "limonene"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/polo-red-edt-perfume-de-hombre-75ml-rhl-41608",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-versace-versace-eros",
+    "nombre": "Versace Eros",
+    "subtitulo": "Eau · 50ml · DBS Beauty Store",
+    "marca": "Versace",
+    "precioReferencia": 85990,
+    "ml": 50,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Fougère / Azul",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Bergamota / Limón",
+      "Lavanda / Menta",
+      "Ámbar / Ambroxan",
+      "Frutal / Coco / Manzana"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Bergamota",
+      "Cítricos"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "limonene",
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/versace-eros-edt-50-ml-vr-80920",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-moschino-moschino-cheap-and-chic",
+    "nombre": "Moschino Cheap And Chic",
+    "subtitulo": "Eau · 50ml · DBS Beauty Store",
+    "marca": "Moschino",
+    "precioReferencia": 41290,
+    "ml": 50,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/moschino-cheap-and-chic-edt-50-ml-mos-06130",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-tous-tous-man-intense",
+    "nombre": "Tous Man Intense",
+    "subtitulo": "Eau · 100ml · DBS Beauty Store",
+    "marca": "Tous",
+    "precioReferencia": 60890,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/tous-man-intense-edt-100ml-tou-83912",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-halloween-halloween-women",
+    "nombre": "Halloween Women",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Halloween",
+    "precioReferencia": 17990,
+    "ml": 30,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Femenino",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/halloween-edt-women-30ml-hl-34061",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  },
+  {
+    "id": "knasta-halloween-halloween-magic",
+    "nombre": "Halloween Magic",
+    "subtitulo": "Eau · 100ml · DBS Beauty Store",
+    "marca": "Halloween",
+    "precioReferencia": 69990,
+    "ml": 100,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/halloween-magic-edt-100ml-hl-00570",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#78350f",
+      "secundario": "#451a03",
+      "acento": "#fbbf24",
+      "forma": "estilizado"
+    }
+  },
+  {
+    "id": "knasta-tous-tous-oh-the-origin",
+    "nombre": "Tous Oh! The Origin",
+    "subtitulo": "Eau · 50ml · DBS Beauty Store",
+    "marca": "Tous",
+    "precioReferencia": 46890,
+    "ml": 50,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/tous-oh-the-origin-edt-50ml-tou-50701",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-prada-luna-rossa-ocean",
+    "nombre": "Luna Rossa Ocean",
+    "subtitulo": "Eau · 50ml · DBS Beauty Store",
+    "marca": "Prada",
+    "precioReferencia": 89990,
+    "ml": 50,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Unisex",
+    "familia": "Cítrico / Acuático",
+    "notas": [
+      "Bergamota / Limón",
+      "Notas Marinas",
+      "Lavanda / Menta"
+    ],
+    "notasDetalle": [
+      "Bergamota",
+      "Cítricos",
+      "Brisa Marina",
+      "Acorde Acuático"
+    ],
+    "estaciones": [
+      "Verano",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "limonene",
+      "linalool"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/perfumes-perfumes-de-hombre-luna-rossa-ocean-eau-de-toilette-50ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#065f46",
+      "secundario": "#064e3b",
+      "acento": "#34d399",
+      "forma": "cilindro"
+    }
+  },
+  {
+    "id": "knasta-ralph-lauren-polo-blue",
+    "nombre": "Polo Blue",
+    "subtitulo": "Eau · 75ml · DBS Beauty Store",
+    "marca": "Ralph Lauren",
+    "precioReferencia": 99990,
+    "ml": 75,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Cítrico / Acuático",
+    "notas": [
+      "Madera (Cedro / Sándalo / Oud)",
+      "Bergamota / Limón",
+      "Notas Marinas"
+    ],
+    "notasDetalle": [
+      "Madera de Cedro",
+      "Sándalo",
+      "Bergamota",
+      "Cítricos"
+    ],
+    "estaciones": [
+      "Verano",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "limonene"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/polo-blue-edt-perfume-de-hombre-75ml-rhl-02291",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#312e81",
+      "secundario": "#1e1b4b",
+      "acento": "#f59e0b",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-gaultier-divine",
+    "nombre": "Gaultier Divine",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 81990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Sin clasificar",
+    "notas": [],
+    "notasDetalle": [],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/perfumes-perfumes-de-mujer-gaultier-divine-eau-de-parfum-30ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-le-male",
+    "nombre": "Le Male",
+    "subtitulo": "Eau · 40ml · DBS Beauty Store",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 63990,
+    "ml": 40,
+    "concentracion": "Eau de Toilette (EDT)",
+    "genero": "Masculino",
+    "familia": "Amaderado / Aromático",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Lavanda / Menta"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Lavanda",
+      "Menta Fresca"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Oficina & Diario",
+    "duracionHoras": 7,
+    "proyeccion": "Moderada",
+    "alergenosIds": [
+      "linalool",
+      "coumarin"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/perfumes-perfumes-de-hombre-le-male-eau-de-toilette-40ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e293b",
+      "secundario": "#0f172a",
+      "acento": "#fbbf24",
+      "forma": "clasico"
+    }
+  },
+  {
+    "id": "knasta-jean-paul-gaultier-scandal",
+    "nombre": "Scandal",
+    "subtitulo": "Eau · 30ml · DBS Beauty Store",
+    "marca": "Jean Paul Gaultier",
+    "precioReferencia": 78990,
+    "ml": 30,
+    "concentracion": "Eau de Parfum (EDP)",
+    "genero": "Unisex",
+    "familia": "Dulce / Gourmand",
+    "notas": [
+      "Vainilla / Haba Tonka",
+      "Caramelo / Miel"
+    ],
+    "notasDetalle": [
+      "Vainilla Bourbon",
+      "Haba Tonka",
+      "Caramelo",
+      "Miel"
+    ],
+    "estaciones": [
+      "Otoño",
+      "Primavera"
+    ],
+    "ocasion": "Noche & Fiesta",
+    "duracionHoras": 9,
+    "proyeccion": "Alta",
+    "alergenosIds": [
+      "coumarin"
+    ],
+    "imagen": "data:image/gif;base64,R0lGODlhPAE8AYAAAP///wAAACH5BAEAAAEALAAAAAA8ATwBAAL+jI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8fyTNf2jef6zvf+DwwKh8Si8YhMKpfMpvMJjUqn1Kr1is1qt9yu9wsOi8fksvmMTqvX7Lb7DY/L5/S6/Y7P6/f8vv8PGCg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkaKjpKWmp6ipqqusra6voKGys7S1tre4ubq7vL2+v7CxwsPExcbHyMnKy8zNzs/AwdLT1NXW19jZ2tvc3d7f0NHi4+Tl5ufo6err7O3u7+Dh8vP09fb3+Pn6+/z9/v/w8woMCBBAsaPIgwocKFDBs6fAgxosSJFCtavIgxo8bAjRw7evwIMqTIkSRLmjyJMqXKlSxbunwJM6bMmTRr2ryJM6fOnTx7+vwJNKjQoUSLGj2KNKnSpUybOn0KNarUqVSrWr2KNavWrVy7ev0KNqzYsWTLmj2LNq3atWzbun0LN67cuXTr2r2LN6/evXz7+v0LOLDgwYQLGz6MOLHixYwbO34MObLkyZQrW76MObPmzZw7e/4MOrTo0aRLmz6NOrXq1axbu34NO7bs2bRr276NO7fu3bx7+/4NPLjwWQUAADs=",
+    "tiendaMejorPrecio": "DBS Beauty Store",
+    "urlMejorPrecio": "https://dbs.cl/perfumes-perfumes-de-mujer-scandal-eau-de-parfum-30ml",
+    "descubiertoEnVivo": true,
+    "colorFrasco": {
+      "primario": "#1e3a8a",
+      "secundario": "#172554",
+      "acento": "#60a5fa",
+      "forma": "lingote"
+    }
+  }
+]

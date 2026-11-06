@@ -1,0 +1,20 @@
+- **Declaración de autoría:** 
+  - **Código co-construido con asistencia de IA:**
+    - Script de scraping multitienda `scraper_stock.py` utilizando `BeautifulSoup`, `requests` y `ThreadPoolExecutor` para extracción paralela con filtrado estricto de relevancia y descarte de categorías no-perfume en 4 tiendas chilenas (Falabella, DBS Beauty Store, Alisha Perfumes, Farmacias Ahumada).
+    - Servidor backend API en Deno con framework Hono (`server.ts`): endpoints REST `/api/buscar`, `/api/comparar`, `/api/analizar`, `/api/reviews` y `/api/logs`, orquestación de subproceso Python, integración con Azure Blob Storage, caché inteligente en memoria con TTL de 15 minutos, motor híbrido de detección de alérgenos IFRA, telemetría de logs estructurados y cascada de fallback resiliente para modelos de Google Gemini y Azure OpenAI.
+    - Frontend modular en React 19 con TypeScript y Vite (`App.tsx`, `App.css` y carpeta `src/components/`):
+      - `SistemaAlergias.tsx`: configurador de sensibilidad dermatológica IFRA y notas personalizadas con semáforo de alerta en tiempo real.
+      - `ListaComprasDrawer.tsx`: lista de compras y perfumes favoritos con cálculo de presupuesto en CLP, etiquetas y notas personales.
+      - `RadarOlfativoChart.tsx`: gráfico hexagonal vectorial en SVG nativo de 6 dimensiones olfativas con soporte de superposición dual en el comparador.
+      - `ConsolaLogsModal.tsx`: consola técnica de observabilidad, métricas de caché y latencia en milisegundos.
+      - `QuizDescubridor.tsx`: asistente interactivo recomendador de fragancias en 3 pasos con filtro automático de alergias y soporte de Modo Oscuro (`[data-theme="dark"]`).
+      - `CatalogoFiltrosSidebar.tsx` y `crawler_knasta.py`: explorador de catálogo con filtros laterales de checkboxes, buscador combinatorio por notas (`AND` / `OR`), paginación de 30 en 30, tarjetas y vista de detalle unificada estilo Knasta, e indexador multitienda de 135+ perfumes reales y 30+ marcas.
+    - Semana 5 (co-construido con asistencia de IA, Claude Code):
+      - Verificación de stock real en `scraper_stock.py` (Falabella, DBS y Alisha vía JSON de Shopify) y su test `test_scraper_stock.py`.
+      - `scraper_sucursales.py`: obtención de horarios y coordenadas de 229 locales de Farmacias Ahumada, con su test `test_scraper_sucursales.py`.
+      - Historial de precios por producto exacto en `server.ts` y su uso en `App.tsx` (precio tachado, porcentaje y gráfico), caché de sucursales con respaldo, y descarga local de imágenes.
+      - `utilidades.ts` (identidad de producto por URL y cola de escritura, con `utilidades_test.ts`), refresco diario del catálogo y actualización en vivo de la ficha al abrirla.
+  - **Diseño funcional, arquitectura y decisiones propias:**
+    - Definición de los casos de uso reales a partir de pruebas con usuarios (búsqueda combinatoria por notas como Chocolate y Madera, sistema de alergias dermatológicas IFRA, paginación y vista de inspección estilo Knasta sin esperas).
+    - Selección del stack tecnológico (Deno + Hono + Python BeautifulSoup + React 19 + Azure Blob Storage / OpenAI + Gemini API), configuración de variables de entorno y validación de precios en tiendas chilenas.
+    - Semana 5: contraste del proyecto con la rúbrica para priorizar stock, historial y horarios; pruebas en el navegador que detectaron los duplicados y los descuentos engañosos (40 ml vs 75 ml, EDT vs Parfum); y decisión de mostrar datos como "Sin verificar" o "referencial" en vez de inventarlos.

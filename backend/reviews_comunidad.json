@@ -1,0 +1,73 @@
+{
+  "acqua di gio": [
+    {
+      "id": "1",
+      "perfume": "Acqua Di Gio",
+      "usuario": "Carlos M.",
+      "rating": 5,
+      "duracion_horas": 8,
+      "comentario": "Un clásico veraniego que nunca falla. Proyección limpia y fresca a brisa marina y bergamota.",
+      "fecha": "2026-10-10"
+    },
+    {
+      "id": "2",
+      "perfume": "Acqua Di Gio",
+      "usuario": "Valeria S.",
+      "rating": 4,
+      "duracion_horas": 7,
+      "comentario": "Rico aroma acuático y cítrico. Muy agradable para días calurosos en la oficina.",
+      "fecha": "2026-10-18"
+    },
+    {
+      "id": "3",
+      "perfume": "Acqua Di Gio",
+      "usuario": "Felipe T.",
+      "rating": 5,
+      "duracion_horas": 8,
+      "comentario": "Excelente fijación en el secado con notas de cedro y pachulí. Totalmente versátil.",
+      "fecha": "2026-10-20"
+    }
+  ],
+  "sauvage": [
+    {
+      "id": "4",
+      "perfume": "Sauvage Dior",
+      "usuario": "Martín R.",
+      "rating": 5,
+      "duracion_horas": 10,
+      "comentario": "Una bestia en proyección. El ambroxan y la pimienta de Sichuan llenan una habitación sin abrumar.",
+      "fecha": "2026-10-15"
+    },
+    {
+      "id": "5",
+      "perfume": "Sauvage Dior",
+      "usuario": "Andrés B.",
+      "rating": 4,
+      "duracion_horas": 9,
+      "comentario": "Muy elogiado por la gente. Huele moderno, limpio pero con mucha fuerza.",
+      "fecha": "2026-10-19"
+    }
+  ],
+  "sauvage dior": [
+    {
+      "id": "6",
+      "perfume": "Sauvage Dior",
+      "usuario": "Martín R.",
+      "rating": 5,
+      "duracion_horas": 10,
+      "comentario": "Una bestia en proyección. El ambroxan y la pimienta de Sichuan llenan una habitación sin abrumar.",
+      "fecha": "2026-10-15"
+    }
+  ],
+  "bleu de chanel": [
+    {
+      "id": "7",
+      "perfume": "Bleu de Chanel",
+      "usuario": "Ignacio P.",
+      "rating": 5,
+      "duracion_horas": 9,
+      "comentario": "La definición de elegancia azul. Cítrico al inicio y luego un incienso místico riquísimo.",
+      "fecha": "2026-10-12"
+    }
+  ]
+}
