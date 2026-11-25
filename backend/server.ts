@@ -3,10 +3,38 @@ import { cors } from "https://deno.land/x/hono/middleware.ts";
 import { BlobServiceClient } from "npm:@azure/storage-blob";
 import { GoogleGenerativeAI } from "npm:@google/generative-ai";
 import { encodeBase64 } from "jsr:@std/encoding/base64";
-import { enCola, mismoProducto } from "./utilidades.ts";
+import { ALERGENOS_UE, sinTildes } from "../frontend/src/alergenos.ts";
+import { etiquetasDePerfume, familiaCatalogoDesde, ocasionesCatalogoDesde } from "../frontend/src/etiquetas.ts";
+import { coincideFlexible, corregirBusqueda, nombresDistintos } from "../frontend/src/busquedaFlexible.ts";
+import { esMismoPerfume } from "../frontend/src/nombres.ts";
+import { leerIngredientes } from "../frontend/src/ingredientes.ts";
+import { alergenosEnIngredientes, CAMPOS_EN, traduccionValida, claveFormula, claveResena, clavesDelMismoPerfume, enCola, historialDeOfertas, mismaFormula, mismoProducto, otraVersionQueLaBuscada, palabrasDeMarcas, sinPalabrasDeMarca, validarResena } from "./utilidades.ts";
+import { montarRutasCuenta } from "./cuentas.ts";
 
 const app = new Hono();
-app.use("/*", cors());
+
+// Solo la propia aplicación puede usar la API desde un navegador con cookies. Con "*" el navegador descarta la
+// cookie de sesión, y además cualquier página podría llamar a la API en nombre del usuario.
+const ORIGENES_PERMITIDOS = new Set([
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:5180", // copia de pruebas
+  ...(Deno.env.get("ORIGENES_PERMITIDOS") || "").split(",").map((o) => o.trim()).filter(Boolean),
+]);
+// Con PERMITIR_RED_LOCAL=1 también la app abierta desde otro equipo de la misma red (un celular en el Wi-Fi de la
+// casa): direcciones privadas 192.168.x.x, 10.x.x.x y 172.16–31.x.x en los puertos de la app. Apagado por defecto.
+const RED_LOCAL = /^http:\/\/(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}):(5173|5174)$/;
+const permitirRedLocal = Deno.env.get("PERMITIR_RED_LOCAL") === "1";
+const origenPermitido = (origen: string) => ORIGENES_PERMITIDOS.has(origen) || (permitirRedLocal && RED_LOCAL.test(origen));
+app.use("/*", cors({ origin: (origen) => (origenPermitido(origen) ? origen : null), credentials: true }));
+
+const cuentas = await montarRutasCuenta(app, {
+  archivoUsuarios: "./usuarios.json",
+  archivoDatos: "./datos_usuarios.json",
+  archivoClave: "./clave_datos.key",
+  origenPermitido,
+  alBorrarUsuario: (id) => borrarReviewsDe(id),
+});
 
 // ─────────────────────────────────────────────
 //  SISTEMA DE LOGS ESTRUCTURADOS Y TELEMETRÍA (Semana 5)
@@ -116,6 +144,33 @@ function guardarEnCache(clave: string, datos: any) {
 }
 
 // ─────────────────────────────────────────────
+//  ÚLTIMO RESULTADO CONOCIDO POR BÚSQUEDA (en disco)
+//  Una búsqueda en vivo tarda lo que tardan las tiendas. Con el último resultado guardado, la app muestra al
+//  instante lo que se sabía y lo reemplaza a medida que responden las tiendas, avisando qué precios cambiaron.
+// ─────────────────────────────────────────────
+const ARCHIVO_ULTIMAS = "./ultimas_busquedas.json";
+const MAX_EDAD_CONOCIDA_MS = 30 * 24 * 60 * 60 * 1000; // más viejo que un mes ya no sirve de anticipo
+interface ResultadoConocido {
+  fecha: string;
+  precios: any[];
+  ficha: any;
+  historial: any[];
+}
+let ultimasBusquedas: Record<string, ResultadoConocido> = {};
+try { ultimasBusquedas = JSON.parse(await Deno.readTextFile(ARCHIVO_ULTIMAS)); } catch { /* todavía no hay */ }
+
+function resultadoConocido(consulta: string): ResultadoConocido | null {
+  const r = ultimasBusquedas[consulta.toLowerCase().trim()];
+  return r && Date.now() - Date.parse(r.fecha) < MAX_EDAD_CONOCIDA_MS ? r : null;
+}
+
+function guardarResultadoConocido(consultas: string[], r: Omit<ResultadoConocido, "fecha">) {
+  const conocido = { fecha: new Date().toISOString(), ...r };
+  for (const c of new Set(consultas.map((x) => x.toLowerCase().trim()))) ultimasBusquedas[c] = conocido;
+  return enCola(() => Deno.writeTextFile(ARCHIVO_ULTIMAS, JSON.stringify(ultimasBusquedas)));
+}
+
+// ─────────────────────────────────────────────
 //  HISTORIAL DE PRECIOS (Persistencia JSON local deduplicada)
 // ─────────────────────────────────────────────
 const ARCHIVO_HISTORIAL = "./historial_precios.json";
@@ -153,6 +208,7 @@ interface RegistroHistorial {
   precio: number;
   ml?: number | null;
   nombre?: string;
+  url?: string;
 }
 
 // Misma heurística que extraerMl() del frontend
@@ -201,13 +257,17 @@ async function guardarEnHistorialSinCola(nombrePerfume: string, precios: any[]):
       const clave = `${p.tienda}|${p.nombre}`;
       const actual = mejorHoy.get(clave);
       if (!actual || p.precio < actual.precio) {
-        mejorHoy.set(clave, { fecha: fechaHoy, tienda: p.tienda, nombre: p.nombre, precio: p.precio, ml: extraerMl(p.nombre) });
+        mejorHoy.set(clave, { fecha: fechaHoy, tienda: p.tienda, nombre: p.nombre, precio: p.precio, ml: extraerMl(p.nombre), url: p.url });
       }
     }
 
     for (const registro of mejorHoy.values()) {
+      // La página del producto y la búsqueda nombran distinto al mismo producto: también se reconoce por URL
       const yaExisteHoy = mapa[key].some(
-        (r) => r.fecha === fechaHoy && r.tienda === registro.tienda && r.nombre === registro.nombre
+        (r) =>
+          r.fecha === fechaHoy &&
+          r.tienda === registro.tienda &&
+          (r.nombre === registro.nombre || (mismoProducto(r.url, registro.url) && r.ml === registro.ml))
       );
       if (!yaExisteHoy) {
         mapa[key].push(registro);
@@ -215,7 +275,9 @@ async function guardarEnHistorialSinCola(nombrePerfume: string, precios: any[]):
     }
 
     await Deno.writeTextFile(ARCHIVO_HISTORIAL, JSON.stringify(mapa, null, 2));
-    return mapa[key];
+    // Se devuelve el historial de estos productos guardado con cualquier búsqueda, no solo con esta
+    if (ofertasValidas.length === 0) return mapa[key];
+    return historialDeOfertas(mapa, ofertasValidas.map((p) => ({ tienda: p.tienda, nombre: p.nombre, url: p.url, ml: extraerMl(p.nombre) })));
   } catch (err) {
     console.error("[Historial] Error al guardar:", err);
     return [];
@@ -223,99 +285,33 @@ async function guardarEnHistorialSinCola(nombrePerfume: string, precios: any[]):
 }
 
 // ─────────────────────────────────────────────
-//  REVIEWS COMUNITARIAS (Persistencia JSON local)
+//  RESEÑAS DE LA COMUNIDAD (JSON local, escritas por usuarios con cuenta)
 // ─────────────────────────────────────────────
 const ARCHIVO_REVIEWS = "./reviews_comunidad.json";
 
 interface Review {
   id: string;
   perfume: string;
-  usuario: string;
+  usuario: string; // apodo que eligió quien la escribió
+  autorId?: string; // id de la cuenta; nunca sale del servidor
   rating: number; // 1-5
   duracion_horas: number;
   comentario: string;
   fecha: string;
 }
 
-async function cargarReviews(): Promise<Record<string, Review[]>> {
+async function cargarReviewsConAutor(): Promise<Record<string, Review[]>> {
   try {
-    const texto = await Deno.readTextFile(ARCHIVO_REVIEWS);
-    return JSON.parse(texto);
+    return JSON.parse(await Deno.readTextFile(ARCHIVO_REVIEWS));
   } catch {
-    return {
-      "acqua di gio": [
-        {
-          id: "1",
-          perfume: "Acqua Di Gio",
-          usuario: "Carlos M.",
-          rating: 5,
-          duracion_horas: 8,
-          comentario: "Un clásico veraniego que nunca falla. Proyección limpia y fresca a brisa marina y bergamota.",
-          fecha: "2026-10-10",
-        },
-        {
-          id: "2",
-          perfume: "Acqua Di Gio",
-          usuario: "Valeria S.",
-          rating: 4,
-          duracion_horas: 7,
-          comentario: "Rico aroma acuático y cítrico. Muy agradable para días calurosos en la oficina.",
-          fecha: "2026-10-18",
-        },
-        {
-          id: "3",
-          perfume: "Acqua Di Gio",
-          usuario: "Felipe T.",
-          rating: 5,
-          duracion_horas: 8,
-          comentario: "Excelente fijación en el secado con notas de cedro y pachulí. Totalmente versátil.",
-          fecha: "2026-10-20",
-        },
-      ],
-      "sauvage": [
-        {
-          id: "4",
-          perfume: "Sauvage Dior",
-          usuario: "Martín R.",
-          rating: 5,
-          duracion_horas: 10,
-          comentario: "Una bestia en proyección. El ambroxan y la pimienta de Sichuan llenan una habitación sin abrumar.",
-          fecha: "2026-10-15",
-        },
-        {
-          id: "5",
-          perfume: "Sauvage Dior",
-          usuario: "Andrés B.",
-          rating: 4,
-          duracion_horas: 9,
-          comentario: "Muy elogiado por la gente. Huele moderno, limpio pero con mucha fuerza.",
-          fecha: "2026-10-19",
-        },
-      ],
-      "sauvage dior": [
-        {
-          id: "6",
-          perfume: "Sauvage Dior",
-          usuario: "Martín R.",
-          rating: 5,
-          duracion_horas: 10,
-          comentario: "Una bestia en proyección. El ambroxan y la pimienta de Sichuan llenan una habitación sin abrumar.",
-          fecha: "2026-10-15",
-        },
-      ],
-      "bleu de chanel": [
-        {
-          id: "7",
-          perfume: "Bleu de Chanel",
-          usuario: "Ignacio P.",
-          rating: 5,
-          duracion_horas: 9,
-          comentario: "La definición de elegancia azul. Cítrico al inicio y luego un incienso místico riquísimo.",
-          fecha: "2026-10-12",
-        },
-      ],
-    };
+    return {}; // sin archivo no hay reseñas: nunca se muestran reseñas de ejemplo como si fueran reales
   }
+}
+
+// Lo que ve cualquiera: sin el id de la cuenta que la escribió
+async function cargarReviews(): Promise<Record<string, Review[]>> {
+  const mapa = await cargarReviewsConAutor();
+  return Object.fromEntries(Object.entries(mapa).map(([k, lista]) => [k, lista.map(({ autorId: _, ...r }) => r)]));
 }
 
 // ─────────────────────────────────────────────
@@ -339,79 +335,118 @@ export interface RadarOlfativo {
   intensidad: number; // 0 - 100
 }
 
-const CATALOGO_REGLAS_ALERGENOS: {
-  id: string;
-  compuesto_quimico: string;
-  nombre_comun: string;
-  keywords: string[];
-  nivel_riesgo: "Alto" | "Moderado" | "Bajo";
-  descripcion: string;
-}[] = [
-  {
-    id: "limonene",
-    compuesto_quimico: "D-Limonene",
-    nombre_comun: "Cítricos / Bergamota / Limón",
-    keywords: ["bergamota", "limón", "limon", "naranja", "mandarina", "pomelo", "toronja", "cítrico", "citrico", "cítricos", "citricos", "yuzu", "lima", "neroli"],
-    nivel_riesgo: "Moderado",
-    descripcion: "Terpeno natural presente en cáscaras cítricas. Puede oxidarse al contacto con el aire y causar dermatitis en pieles reactivas.",
-  },
-  {
-    id: "linalool",
-    compuesto_quimico: "Linalool",
-    nombre_comun: "Lavanda / Flores Blancas / Neroli",
-    keywords: ["lavanda", "neroli", "cilantro", "albahaca", "jazmín", "jazmin", "flor de azahar", "azahar", "bergamota", "salvia", "geranio"],
-    nivel_riesgo: "Moderado",
-    descripcion: "Alcohol terpénico floral muy frecuente en perfumería fina. Regulado por la norma europea e IFRA.",
-  },
-  {
-    id: "cinnamal",
-    compuesto_quimico: "Cinnamal / Cinamaldehído",
-    nombre_comun: "Canela y Especias Cálidas",
-    keywords: ["canela", "cassia", "especias cálidas", "especiado", "cardamomo", "nuez moscada"],
-    nivel_riesgo: "Alto",
-    descripcion: "Compuesto orgánico responsable del aroma a canela. Es uno de los sensibilizantes cutáneos más potentes según IFRA.",
-  },
-  {
-    id: "eugenol",
-    compuesto_quimico: "Eugenol / Isoeugenol",
-    nombre_comun: "Clavo de Olor / Pimienta / Especias",
-    keywords: ["clavo", "pimienta", "pimienta rosa", "pimienta negra", "sichuan", "nuez moscada", "albahaca", "canela", "especias"],
-    nivel_riesgo: "Alto",
-    descripcion: "Fenilpropanoide presente en clavo de olor y especias picantes. Restringido en pieles con dermatitis de contacto.",
-  },
-  {
-    id: "coumarin",
-    compuesto_quimico: "Coumarin (Cumarina)",
-    nombre_comun: "Haba Tonka / Vainilla / Almendra",
-    keywords: ["haba tonka", "tonka", "vainilla", "almendra", "cacao", "praliné", "praline", "caramelo", "dulce"],
-    nivel_riesgo: "Moderado",
-    descripcion: "Lactona aromática típica de fragancias orientales, dulces y gourmand (presente de forma natural en el haba tonka).",
-  },
-  {
-    id: "oakmoss",
-    compuesto_quimico: "Evernia Prunastri (Musgo de Roble)",
-    nombre_comun: "Musgo de Roble / Notas Terrosas",
-    keywords: ["musgo", "musgo de roble", "roble", "liquen", "chipre", "fougère", "fougere", "vetiver", "pachulí", "pachuli"],
-    nivel_riesgo: "Alto",
-    descripcion: "Extracto botánico clásico de alta fijación severamente regulado por IFRA por su alto potencial alergénico (atranol).",
-  },
-  {
-    id: "citral",
-    compuesto_quimico: "Citral (Geranial + Neral)",
-    nombre_comun: "Verbena / Hierba Limón / Jengibre",
-    keywords: ["verbena", "lemongrass", "hierba limón", "jengibre", "cidra", "petitgrain", "limón"],
-    nivel_riesgo: "Moderado",
-    descripcion: "Aldehído terpénico de aroma cítrico intenso que puede producir irritación en pieles sensibles al sol.",
-  },
-  {
-    id: "geraniol",
-    compuesto_quimico: "Geraniol / Citronellol",
-    nombre_comun: "Rosa / Geranio / Peonía",
-    keywords: ["rosa", "geranio", "peonía", "peonia", "magnolia", "lirio", "tuberosa", "nardo", "floral"],
-    nivel_riesgo: "Bajo",
-    descripcion: "Alcohol monoterpénico principal en aceites esenciales de rosa y geranio.",
-  },
-];
+// Los 26 alérgenos de la norma europea, desde la lista única compartida con el frontend
+const CATALOGO_REGLAS_ALERGENOS = ALERGENOS_UE.map((a) => ({
+  id: a.id,
+  compuesto_quimico: a.compuesto,
+  nombre_comun: a.nombre,
+  keywords: a.keywords,
+  nivel_riesgo: a.riesgo,
+  descripcion: a.explicacion,
+}));
+
+// ─────────────────────────────────────────────
+//  LISTAS DEL ENVASE CONOCIDAS
+//  Pocas tiendas publican los ingredientes. Cada lista real que aparece se guarda, y se reusa para el mismo
+//  perfume en la misma concentración (misma fórmula) cuando otra tienda u otro tamaño no la publica.
+// ─────────────────────────────────────────────
+const ARCHIVO_INGREDIENTES = "./ingredientes_conocidos.json";
+interface ListaConocida { url: string; nombre: string; tienda: string; ingredientes: string; fecha: string }
+let listasConocidas: ListaConocida[] = [];
+try { listasConocidas = JSON.parse(await Deno.readTextFile(ARCHIVO_INGREDIENTES)); } catch { /* todavía no hay listas */ }
+// shortcut: las marcas salen del catálogo al iniciar; una marca nueva queda en la "línea" del nombre hasta reiniciar,
+// lo que solo impide reusar su lista (falla hacia "sin lista", nunca hacia una lista equivocada)
+let marcasConocidas = new Set<string>();
+try {
+  marcasConocidas = palabrasDeMarcas(JSON.parse(await Deno.readTextFile("./catalogo_descubiertos.json")).map((p: any) => p.marca));
+} catch { /* sin catálogo */ }
+let listasPorGuardar = false;
+
+function recordarLista(oferta: any) {
+  const registro: ListaConocida = {
+    url: oferta.url, nombre: oferta.nombre, tienda: oferta.tienda, ingredientes: oferta.ingredientes,
+    fecha: new Date().toISOString().split("T")[0],
+  };
+  const i = listasConocidas.findIndex((l) => mismoProducto(l.url, oferta.url));
+  if (i >= 0 && listasConocidas[i].ingredientes === registro.ingredientes) return;
+  if (i >= 0) listasConocidas[i] = registro;
+  else listasConocidas.push(registro);
+  listasPorGuardar = true;
+}
+
+// Entre las listas de la misma fórmula se prefiere la más completa (más alérgenos declarados y luego más texto)
+function listaDeMismaFormula(nombre: string): ListaConocida | undefined {
+  const clave = claveFormula(nombre, marcasConocidas);
+  if (!clave) return undefined;
+  const candidatas = listasConocidas
+    .map((l) => ({ l, ids: alergenosEnIngredientes(l.ingredientes) }))
+    .filter(({ l, ids }) => ids && mismaFormula(clave, claveFormula(l.nombre, marcasConocidas)));
+  candidatas.sort((a, b) => b.ids!.length - a.ids!.length || b.l.ingredientes.length - a.l.ingredientes.length);
+  return candidatas[0]?.l;
+}
+
+async function guardarListasConocidas() {
+  if (!listasPorGuardar) return;
+  listasPorGuardar = false;
+  await enCola(() => Deno.writeTextFile(ARCHIVO_INGREDIENTES, JSON.stringify(listasConocidas, null, 2)));
+}
+
+// ─────────────────────────────────────────────
+//  FICHAS CONOCIDAS
+//  La ficha de un perfume no cambia: se guarda la respuesta de la IA en disco y se consulta una sola vez por
+//  perfume. Antes cada búsqueda nueva (y cada reinicio del servidor) esperaba ~6 s a la IA.
+// ─────────────────────────────────────────────
+const ARCHIVO_FICHAS = "./fichas_conocidas.json";
+// fichas: por nombre oficial ("dior sauvage"); alias: lo que se escribió para llegar a ella ("sauvage", "savage dior")
+let fichasConocidas: { fichas: Record<string, any>; alias: Record<string, string> } = { fichas: {}, alias: {} };
+try { fichasConocidas = JSON.parse(await Deno.readTextFile(ARCHIVO_FICHAS)); } catch { /* todavía no hay fichas */ }
+const claveFicha = (texto: string) => sinTildes(texto.toLowerCase()).replace(/[^a-z0-9]+/g, " ").trim();
+
+function fichaConocida(consulta: string): any | undefined {
+  const clave = claveFicha(consulta);
+  return fichasConocidas.fichas[fichasConocidas.alias[clave] ?? clave];
+}
+
+function recordarFicha(consulta: string, ficha: any) {
+  const oficial = claveFicha(`${ficha.marca || ""} ${ficha.nombre}`);
+  fichasConocidas.fichas[oficial] = ficha;
+  if (claveFicha(consulta) !== oficial) fichasConocidas.alias[claveFicha(consulta)] = oficial;
+  return enCola(() => Deno.writeTextFile(ARCHIVO_FICHAS, JSON.stringify(fichasConocidas)));
+}
+
+// La consulta deja de apuntar a una ficha que resultó ser de otro perfume (la ficha misma sigue siendo válida)
+function olvidarAlias(consulta: string) {
+  delete fichasConocidas.alias[claveFicha(consulta)];
+  return enCola(() => Deno.writeTextFile(ARCHIVO_FICHAS, JSON.stringify(fichasConocidas)));
+}
+
+// Alérgenos declarados por el fabricante en la lista de ingredientes de la oferta (dato del envase, no estimado).
+// Si la oferta no trae lista, se usa la de otra presentación del mismo perfume y concentración, indicando su origen.
+function conAlergenosDeclarados(oferta: any): any {
+  if (!oferta) return oferta;
+  if (alergenosEnIngredientes(oferta.ingredientes)) {
+    recordarLista(oferta);
+  } else {
+    const conocida = listaDeMismaFormula(oferta.nombre);
+    if (conocida) {
+      oferta.ingredientes = conocida.ingredientes;
+      if (!mismoProducto(conocida.url, oferta.url)) {
+        oferta.ingredientesOrigen = { nombre: conocida.nombre, tienda: conocida.tienda, url: conocida.url };
+      }
+    }
+  }
+  const ids = alergenosEnIngredientes(oferta.ingredientes);
+  if (!ids) return oferta;
+  oferta.alergenosDeclarados = CATALOGO_REGLAS_ALERGENOS.filter((r) => ids.includes(r.id)).map((r) => ({
+    id: r.id,
+    compuesto_quimico: r.compuesto_quimico,
+    nombre_comun: r.nombre_comun,
+    presente_en: "Lista de ingredientes del envase",
+    nivel_riesgo: r.nivel_riesgo,
+    descripcion: r.descripcion,
+  }));
+  return oferta;
+}
 
 function enriquecerFichaConRadarYAlergenos(ficha: any): any {
   if (!ficha) return ficha;
@@ -637,24 +672,56 @@ function esTerminoNoFragancia(texto: string): boolean {
 // ─────────────────────────────────────────────
 //  IA: Genera ficha de fragancia completa (con Radar y Alérgenos IFRA)
 // ─────────────────────────────────────────────
-async function generarFichaFragancia(nombrePerfume: string, apiKey: string) {
+// Lo que publican las tiendas sobre un perfume (título, notas y descripción), para que la IA arme la ficha de un
+// lanzamiento que todavía no conoce. Solo ofertas de ese mismo perfume: una búsqueda trae también otras versiones.
+// Algunas tiendas ponen notas en el campo de ingredientes ("cereza, vainilla de Madagascar"): si no es una lista del
+// envase, también son notas que publica la tienda
+const notasEnIngredientes = (p: any) => (p.ingredientes && !leerIngredientes(p.ingredientes) ? p.ingredientes : "");
+
+function evidenciaDeTiendas(consulta: string, precios: any[], marca = ""): string {
+  const conTexto = precios.filter(
+    (p) => (p.descripcionTienda || p.notasTienda || p.familiaTienda || notasEnIngredientes(p)) && coincideFlexible(p.nombre, consulta),
+  );
+  // Con la marca conocida, solo ese perfume exacto: "Bad Boy Elixir" también calza con los textos de "Bad Boy Cobalt
+  // Elixir", y con ellos la IA volvía a describir el Cobalt
+  const exactas = marca ? conTexto.filter((p) => esMismoPerfume(sinPalabrasDeMarca(consulta, marca), p.nombre, marca)) : conTexto;
+  return (marca ? exactas : conTexto)
+    .slice(0, 3)
+    .map((p) => {
+      const otras = notasEnIngredientes(p);
+      return `- ${p.tienda}: "${p.nombre}". ${p.notasTienda ? `Notas: ${p.notasTienda}. ` : ""}${otras ? `Otras notas (publicadas en el campo de ingredientes): ${otras}. ` : ""}${p.familiaTienda ? `Familia según la tienda: ${p.familiaTienda}. ` : ""}${p.descripcionTienda || ""}`;
+    })
+    .join("\n");
+}
+
+// Con `evidencia` (ver evidenciaDeTiendas) la ficha se arma con lo que publican las tiendas y queda con origen "tiendas"
+async function generarFichaFragancia(nombrePerfume: string, apiKey: string, evidencia = "") {
   if (esTerminoNoFragancia(nombrePerfume)) {
     await registrarLog("WARN", "API", `Búsqueda rechazada por filtro de categoría no-fragancia: "${nombrePerfume}"`);
     return null;
   }
+  const conocida = fichaConocida(nombrePerfume);
+  if (conocida) return normalizarFicha(structuredClone(conocida));
 
   const prompt = `Eres un evaluador y maestro perfumista internacional con más de 20 años de experiencia y especialista en seguridad dermatológica IFRA.
 Evalúa el siguiente término ingresado: "${nombrePerfume}".
 
 PASO 1: VERIFICACIÓN RIGUROSA
 Determina si "${nombrePerfume}" corresponde a un perfume, colonia, fragancia, marca de perfumería o aroma real.
-Si el término NO es un perfume (por ejemplo: si es calzado, ropa, zapatillas, muebles, camas, electrodomésticos, tecnología, comida, etc.), NO DEBES INVENTAR NOTAS OLFATIVAS NI PIRÁMIDE. Devuelve exactamente este JSON:
+El término puede venir mal escrito o ser el título de un producto en una tienda (con tamaño, "set de regalo", un desodorante o una loción que acompañan al perfume, etc.): en ese caso identifica el perfume principal y responde con su nombre oficial.
+${evidencia ? "" : `Corregir un error de tipeo no es cambiar de perfume: si el nombre corresponde a un perfume que no conoces con certeza (por ejemplo, un lanzamiento reciente o una versión nueva de una línea conocida), NO lo sustituyas por otro perfume parecido de la misma marca ni por la versión original de la línea. En ese caso devuelve exactamente {"es_perfume": true, "desconocido": true}.
+`}${evidencia ? `
+INFORMACIÓN DE LAS TIENDAS: este producto se vende hoy como perfume en tiendas chilenas, así que "es_perfume" es true. Si no lo conoces es porque es un lanzamiento posterior a tu conocimiento. Esto es lo que publican las tiendas:
+${evidencia}
+Arma la ficha SOLO con esta información: las notas, la familia y la descripción deben salir de lo que dicen las tiendas. Lo que no digan déjalo vacío ([] en las listas de notas); no lo completes con los datos de otro perfume de la misma línea. Agrega "origen": "tiendas" al JSON.
+` : ""}Si el término NO es un perfume (por ejemplo: si es calzado, ropa, zapatillas, muebles, camas, electrodomésticos, tecnología, comida, etc.), NO DEBES INVENTAR NOTAS OLFATIVAS NI PIRÁMIDE. Devuelve exactamente este JSON:
 {
   "es_perfume": false,
   "mensaje": "El término '${nombrePerfume}' no corresponde a una fragancia o perfume reconocido."
 }
 
 PASO 2: SI SÍ ES UN PERFUME O FRAGANCIA
+Usa la pirámide olfativa oficial de la marca y no repitas una misma nota en dos niveles (salida, corazón y fondo).
 Devuelve ESTRICTAMENTE este JSON (sin texto extra ni backticks, solo el JSON puro):
 {
   "es_perfume": true,
@@ -685,12 +752,26 @@ Devuelve ESTRICTAMENTE este JSON (sin texto extra ni backticks, solo el JSON pur
     "intensidad": 75
   },
   "guia_aplicacion": {
-    "atomizaciones": "3 a 5 atomizaciones recomendadas (2 en cuello, 1 en muñecas y 1 en pecho)",
-    "puntos_pulso": ["Cuello lateral", "Interior de las muñecas", "Detrás de las orejas", "Pecho"],
-    "consejo_experto": "Aplica tras la ducha sobre piel limpia e hidratada. No frotes las muñecas entre sí, ya que la fricción rompe las moléculas olfativas de salida.",
-    "clima_ideal": "Clima templado a cálido para potenciar su proyección y evolución en piel"
+    "atomizaciones": "Cuántas atomizaciones y dónde, según la concentración y la proyección de ESTE perfume",
+    "puntos_pulso": ["punto1", "punto2", "punto3"],
+    "consejo_experto": "Un consejo propio de ESTE perfume (cómo evoluciona, cuándo rinde mejor); no un consejo genérico que sirva para cualquiera",
+    "clima_ideal": "El clima en que rinde mejor ESTE perfume y por qué"
   },
   "descripcion": "Descripción experta de 3-4 frases describiendo la evolución, el carácter y la experiencia olfativa única de este perfume.",
+  "en": {
+    "familia_olfativa": "La misma familia, en inglés (ej: Aquatic Aromatic)",
+    "acordes_principales": ["Los mismos acordes en inglés, en el mismo orden"],
+    "notas_salida": ["Las mismas notas de salida en inglés, en el mismo orden y la misma cantidad"],
+    "notas_corazon": ["Las mismas notas de corazón en inglés, en el mismo orden y la misma cantidad"],
+    "notas_fondo": ["Las mismas notas de fondo en inglés, en el mismo orden y la misma cantidad"],
+    "estaciones": ["Las mismas estaciones en inglés"],
+    "ocasiones": ["Las mismas ocasiones en inglés"],
+    "mejor_momento_dia": "El mismo momento del día en inglés",
+    "sillage": "La misma descripción de la estela, en inglés",
+    "publico_objetivo": "El mismo público objetivo, en inglés",
+    "descripcion": "La misma descripción, en inglés",
+    "guia_aplicacion": { "atomizaciones": "en inglés", "puntos_pulso": ["los mismos puntos en inglés"], "consejo_experto": "en inglés", "clima_ideal": "en inglés" }
+  },
   "similares_olfativos": [
     {
       "nombre": "Nombre completo reconocible del perfume 1",
@@ -761,11 +842,16 @@ Devuelve ESTRICTAMENTE este JSON (sin texto extra ni backticks, solo el JSON pur
         prompt
       );
       if (fichaAzure) {
-        if (fichaAzure.es_perfume === false) {
-          await registrarLog("WARN", "IA_AZURE", `IA rechazó "${nombrePerfume}" por no ser un perfume.`);
+        if (fichaAzure.es_perfume === false || fichaAzure.desconocido) {
+          await registrarLog("WARN", "IA_AZURE", `La IA no reconoció "${nombrePerfume}" (${fichaAzure.desconocido ? "perfume que no conoce" : "no es un perfume"}).`);
           return null;
         }
-        if (fichaAzure.nombre) return normalizarFicha(fichaAzure);
+        if (fichaAzure.nombre) {
+          if (evidencia) fichaAzure.origen = "tiendas";
+          fichaAzure.en = traduccionValida(fichaAzure.en, fichaAzure);
+          await recordarFicha(nombrePerfume, structuredClone(fichaAzure));
+          return normalizarFicha(fichaAzure);
+        }
       }
     } catch (azureErr: any) {
       await registrarLog("WARN", "IA_AZURE", `Fallback a Gemini activado: ${azureErr.message}`);
@@ -773,14 +859,18 @@ Devuelve ESTRICTAMENTE este JSON (sin texto extra ni backticks, solo el JSON pur
   }
 
   // 2. Probar con Gemini
+  if (!apiKey) return null;
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const result = await llamarGeminiConFallback(genAI, [prompt]);
     if (result) {
-      if (result.es_perfume === false) {
-        await registrarLog("WARN", "IA_GEMINI", `Gemini identificó que "${nombrePerfume}" NO es un perfume.`);
+      if (result.es_perfume === false || result.desconocido) {
+        await registrarLog("WARN", "IA_GEMINI", `Gemini no reconoció "${nombrePerfume}" (${result.desconocido ? "perfume que no conoce" : "no es un perfume"}).`);
         return null;
       }
+      if (evidencia) result.origen = "tiendas";
+      result.en = traduccionValida(result.en, result);
+      if (result.nombre) await recordarFicha(nombrePerfume, structuredClone(result));
       return normalizarFicha(result);
     }
   } catch (err) {
@@ -790,6 +880,61 @@ Devuelve ESTRICTAMENTE este JSON (sin texto extra ni backticks, solo el JSON pur
     await registrarLog("WARN", "IA_GEMINI", `Usando ficha olfativa curada de respaldo para "${nombrePerfume}" por límite de cuota.`);
     return normalizarFicha(construirFichaRespaldoDiferenciada(nombrePerfume));
   }
+}
+
+// ─────────────────────────────────────────────
+//  Ficha en inglés: la interfaz tiene español e inglés, y la ficha la escribe la IA en español. La versión en inglés
+//  va en `ficha.en` (solo los textos; los números, el radar y los alérgenos son los mismos). La app la muestra si se
+//  eligió inglés y, si falta, muestra el español.
+// ─────────────────────────────────────────────
+// Traduce una ficha ya guardada (las de antes de pedir el inglés en el prompt)
+async function traducirFicha(ficha: any): Promise<any> {
+  const original: any = {};
+  for (const campo of CAMPOS_EN) {
+    const v = ficha[campo];
+    if (v != null && v !== "" && !(Array.isArray(v) && v.length === 0)) original[campo] = v;
+  }
+  if (!Object.keys(original).length) return undefined;
+  const prompt = `Traduce al inglés los valores de este JSON, que describe el perfume "${ficha.marca || ""} ${ficha.nombre || ""}".
+Devuelve el mismo JSON con las mismas claves y la misma estructura: cada lista con la misma cantidad de elementos y en el mismo orden.
+Usa los nombres habituales en inglés de las notas de perfumería (Bergamota → Bergamot, Haba Tonka → Tonka Bean, Azahar → Orange Blossom). Las materias primas que en inglés se llaman igual (Ambroxan, Oud, Akigalawood) quedan igual. Traduce el sentido, no palabra por palabra. Devuelve solo el JSON.
+${JSON.stringify(original)}`;
+  let respuesta: any = null;
+  if (Deno.env.get("AZURE_OPENAI_API_KEY")) {
+    try {
+      respuesta = await llamarAzureOpenAI("Eres un traductor de fichas de perfumería del español al inglés. Devuelve únicamente JSON válido.", prompt);
+    } catch { /* se prueba con Gemini */ }
+  }
+  const claveGemini = Deno.env.get("GEMINI_API_KEY");
+  if (!respuesta && claveGemini) {
+    try {
+      respuesta = await llamarGeminiConFallback(new GoogleGenerativeAI(claveGemini), [prompt]);
+    } catch { /* queda sin traducir */ }
+  }
+  return traduccionValida(respuesta, ficha);
+}
+
+// Se ejecuta a mano, con el servidor apagado: deno run -A --env server.ts --traducir [cuántas]
+// Traduce las fichas guardadas que no tienen inglés. Se puede interrumpir y repetir: no vuelve a pagar las hechas.
+async function traducirFichasGuardadas(limite = Infinity) {
+  const resumen = { traducidas: 0, sinTraducir: 0, yaEstaban: 0 };
+  for (const ficha of Object.values(fichasConocidas.fichas)) {
+    if (ficha.en) {
+      resumen.yaEstaban++;
+      continue;
+    }
+    if (resumen.traducidas + resumen.sinTraducir >= limite) break;
+    const en = await traducirFicha(ficha);
+    if (en) {
+      ficha.en = en;
+      resumen.traducidas++;
+      await enCola(() => Deno.writeTextFile(ARCHIVO_FICHAS, JSON.stringify(fichasConocidas)));
+    } else {
+      resumen.sinTraducir++;
+    }
+    console.log(`${en ? "✓" : "✗"} ${ficha.marca || ""} ${ficha.nombre || ""}`);
+  }
+  return resumen;
 }
 
 // ─────────────────────────────────────────────
@@ -1074,7 +1219,8 @@ function construirFichaRespaldoDiferenciada(nombrePerfume: string): any {
     return {
       ...encontrado.ficha,
       publico_objetivo: `Amantes de las fragancias ${encontrado.ficha.familia_olfativa.toLowerCase()} con sello distintivo.`,
-      presentaciones_habituales: ["50 ml", "100 ml", "200 ml"],
+      // Los tamaños salen de las ofertas reales de las tiendas, no de una lista fija
+      presentaciones_habituales: [],
       guia_aplicacion: {
         atomizaciones: encontrado.ficha.intensidad.includes("Intenso")
           ? "2 a 4 atomizaciones (cuello y muñecas)"
@@ -1087,6 +1233,8 @@ function construirFichaRespaldoDiferenciada(nombrePerfume: string): any {
       // Los similares se calculan en el frontend con el catálogo real (precios de tienda)
       similares_olfativos: [],
       similares_precio: [],
+      // La pantalla dice que es una ficha escrita a mano, no la de la IA
+      origen: "curada",
     };
   }
 
@@ -1098,22 +1246,49 @@ function construirFichaRespaldoDiferenciada(nombrePerfume: string): any {
 // ─────────────────────────────────────────────
 //  PUENTE DENO → PYTHON (scraper multi-tienda con telemetría)
 // ─────────────────────────────────────────────
-async function buscarPreciosConPython(nombrePerfume: string) {
+// Con `alLlegarTienda` se entregan las ofertas de cada tienda apenas responde, sin esperar a la más lenta
+// (DBS suele tardar 4 a 8 s; Falabella y Alisha, 1 a 2 s)
+async function buscarPreciosConPython(nombrePerfume: string, alLlegarTienda?: (ofertas: any[]) => void) {
   const inicio = Date.now();
   try {
     const palabras = nombrePerfume.trim().split(/\s+/);
-    const comando = new Deno.Command("python", {
-      args: ["scraper_stock.py", ...palabras],
+    const hijo = new Deno.Command("python", {
+      args: ["scraper_stock.py", "--por-tienda", ...palabras],
       stdout: "piped",
       stderr: "piped",
-    });
+    }).spawn();
+    const stderr = new Response(hijo.stderr).text();
 
-    const proceso = await comando.output();
+    // El scraper escribe una línea JSON por tienda y, al final, la lista completa ordenada
+    let lista: any = null;
+    // Lo que el scraper no pudo leer (Falabella respondiendo 403, por ejemplo): sin esto un bloqueo se registraba como
+    // una búsqueda que salió bien
+    let avisos: string[] = [];
+    const leerLinea = (linea: string) => {
+      if (!linea.trim()) return;
+      const dato = JSON.parse(linea);
+      if (Array.isArray(dato.avisos)) avisos = dato.avisos;
+      if (Array.isArray(dato.todas)) lista = dato.todas;
+      else if (Array.isArray(dato.ofertas) && alLlegarTienda) {
+        dato.ofertas.forEach(conAlergenosDeclarados);
+        alLlegarTienda(dato.ofertas);
+      }
+    };
+    let pendiente = "";
+    for await (const trozo of hijo.stdout.pipeThrough(new TextDecoderStream())) {
+      const lineas = (pendiente + trozo).split("\n");
+      pendiente = lineas.pop()!;
+      lineas.forEach(leerLinea);
+    }
+    leerLinea(pendiente);
+    const proceso = { code: (await hijo.status).code, stderr: await stderr };
     const duracion = Date.now() - inicio;
 
     if (proceso.code === 0) {
-      const resultadoTexto = new TextDecoder().decode(proceso.stdout);
-      const lista = JSON.parse(resultadoTexto);
+      if (Array.isArray(lista)) {
+        lista.forEach(conAlergenosDeclarados);
+        await guardarListasConocidas();
+      }
       const conteoPorTienda: Record<string, number> = {};
       if (Array.isArray(lista)) {
         for (const item of lista) {
@@ -1127,10 +1302,10 @@ async function buscarPreciosConPython(nombrePerfume: string) {
         duracion,
         { query: nombrePerfume, total_ofertas: Array.isArray(lista) ? lista.length : 0, desglose_tiendas: conteoPorTienda }
       );
+      for (const aviso of avisos) await registrarLog("WARN", "SCRAPER", `${aviso} (búsqueda "${nombrePerfume}")`);
       return lista;
     } else {
-      const err = new TextDecoder().decode(proceso.stderr);
-      await registrarLog("ERROR", "SCRAPER", `Fallo en subproceso Python para "${nombrePerfume}"`, duracion, { stderr: err });
+      await registrarLog("ERROR", "SCRAPER", `Fallo en subproceso Python para "${nombrePerfume}"`, duracion, { stderr: proceso.stderr });
       return null;
     }
   } catch (error: any) {
@@ -1140,139 +1315,60 @@ async function buscarPreciosConPython(nombrePerfume: string) {
   }
 }
 
+// Precio y stock actuales de un producto ya conocido, leyendo su propia página (Falabella, DBS o Alisha)
+async function cotizarUrlConPython(url: string): Promise<any | null> {
+  if (!/^https:\/\/(www\.falabella\.com|dbs\.cl|alishaperfumes\.cl)\//.test(url || "")) return null;
+  const inicio = Date.now();
+  try {
+    const proceso = await new Deno.Command("python", {
+      args: ["scraper_stock.py", "--url", url],
+      stdout: "piped",
+      stderr: "piped",
+    }).output();
+    const oferta = proceso.code === 0 ? conAlergenosDeclarados(JSON.parse(new TextDecoder().decode(proceso.stdout))) : null;
+    await guardarListasConocidas();
+    await registrarLog(
+      oferta ? "SUCCESS" : "WARN",
+      "SCRAPER",
+      oferta ? `Re-cotización directa en ${oferta.tienda}: $${oferta.precio}` : `Re-cotización directa sin resultado: ${url}`,
+      Date.now() - inicio
+    );
+    return oferta;
+  } catch (error: any) {
+    await registrarLog("ERROR", "SCRAPER", `Re-cotización directa falló: ${error.message}`, Date.now() - inicio);
+    return null;
+  }
+}
+
 // ─────────────────────────────────────────────
 //  SUCURSALES Y HORARIOS (Disponibilidad Geográfica)
 // ─────────────────────────────────────────────
+// Respaldo escrito a mano, solo para cuando no se pueden leer las páginas de las tiendas. Falabella no publica su
+// lista de tiendas sin JavaScript, así que sus locales quedan siempre aquí. Coordenadas verificadas en
+// OpenStreetMap; los horarios son referenciales. Sin teléfono: los que había no estaban verificados.
 const SUCURSALES_CHILE = [
-  {
-    tienda: "Falabella",
-    nombre: "Falabella Parque Arauco",
-    direccion: "Av. Pdte. Kennedy 5413, Las Condes",
-    horario: "Lunes a Domingo: 10:00 - 20:30",
-    comuna: "Las Condes",
-    region: "Metropolitana",
-    telefono: "600 380 5000",
-    lat: -33.4058,
-    lng: -70.5792,
-  },
-  {
-    tienda: "Falabella",
-    nombre: "Falabella Costanera Center",
-    direccion: "Av. Andrés Bello 2425, Providencia",
-    horario: "Lunes a Domingo: 10:00 - 20:30",
-    comuna: "Providencia",
-    region: "Metropolitana",
-    telefono: "600 380 5000",
-    lat: -33.4175,
-    lng: -70.6063,
-  },
-  {
-    tienda: "Falabella",
-    nombre: "Falabella Apumanque",
-    direccion: "Manquehue Sur 31, Las Condes",
-    horario: "Lunes a Domingo: 10:00 - 20:00",
-    comuna: "Las Condes",
-    region: "Metropolitana",
-    telefono: "600 380 5000",
-    lat: -33.4143,
-    lng: -70.5963,
-  },
-  {
-    tienda: "Falabella",
-    nombre: "Falabella Alto Las Condes",
-    direccion: "Av. Presidente Kennedy 9001, Las Condes",
-    horario: "Lunes a Domingo: 10:00 - 21:00",
-    comuna: "Las Condes",
-    region: "Metropolitana",
-    telefono: "600 380 5000",
-    lat: -33.3914,
-    lng: -70.5411,
-  },
-  {
-    tienda: "Falabella",
-    nombre: "Falabella Mall Plaza Egaña",
-    direccion: "Tobalaba 8700, Ñuñoa",
-    horario: "Lunes a Domingo: 10:00 - 21:00",
-    comuna: "Ñuñoa",
-    region: "Metropolitana",
-    telefono: "600 380 5000",
-    lat: -33.4542,
-    lng: -70.5891,
-  },
-  {
-    tienda: "Farmacias Ahumada",
-    nombre: "Ahumada Providencia 24h",
-    direccion: "Av. Providencia 2185, Providencia",
-    horario: "Abierto 24 Horas",
-    comuna: "Providencia",
-    region: "Metropolitana",
-    telefono: "600 222 4000",
-    lat: -33.4262,
-    lng: -70.6103,
-  },
-  {
-    tienda: "Farmacias Ahumada",
-    nombre: "Ahumada Las Condes",
-    direccion: "Av. Las Condes 12348, Las Condes",
-    horario: "Lunes a Domingo: 9:00 - 22:00",
-    comuna: "Las Condes",
-    region: "Metropolitana",
-    telefono: "600 222 4000",
-    lat: -33.3820,
-    lng: -70.5513,
-  },
-  {
-    tienda: "Farmacias Ahumada",
-    nombre: "Ahumada Ñuñoa",
-    direccion: "Av. Irarrázaval 1890, Ñuñoa",
-    horario: "Lunes a Viernes: 8:30 - 21:30, Sáb-Dom: 9:00 - 20:00",
-    comuna: "Ñuñoa",
-    region: "Metropolitana",
-    telefono: "600 222 4000",
-    lat: -33.4551,
-    lng: -70.6282,
-  },
-  {
-    tienda: "Alisha Perfumes",
-    nombre: "Alisha Perfumes Mall Plaza Norte",
-    direccion: "Américo Vespucio 1737, Huechuraba",
-    horario: "Lunes a Domingo: 10:00 - 21:00",
-    comuna: "Huechuraba",
-    region: "Metropolitana",
-    telefono: "+56 9 8765 4321",
-    lat: -33.3667,
-    lng: -70.6494,
-  },
-  {
-    tienda: "Alisha Perfumes",
-    nombre: "Alisha Perfumes Mall Costanera",
-    direccion: "Av. Andrés Bello 2447, Local 2021, Providencia",
-    horario: "Lunes a Domingo: 10:00 - 21:00",
-    comuna: "Providencia",
-    region: "Metropolitana",
-    telefono: "+56 9 8765 4322",
-    lat: -33.4172,
-    lng: -70.6071,
-  },
-  {
-    tienda: "DBS Beauty Store",
-    nombre: "DBS Beauty Store La Reina",
-    direccion: "Av. Ossa 1881, La Reina",
-    horario: "Lunes a Viernes: 10:00 - 19:30, Sáb: 10:00 - 15:00",
-    comuna: "La Reina",
-    region: "Metropolitana",
-    telefono: "+56 2 2273 0000",
-    lat: -33.4454,
-    lng: -70.5585,
-  },
-].map((s) => ({ ...s, fuente: "referencial" }));
+  ["Falabella", "Falabella Parque Arauco", "Av. Presidente Kennedy 5413", "Las Condes", -33.4023, -70.5773],
+  ["Falabella", "Falabella Costanera Center", "Av. Andrés Bello 2425", "Providencia", -33.418, -70.6064],
+  ["Falabella", "Falabella Alto Las Condes", "Av. Presidente Kennedy 9001", "Las Condes", -33.3909, -70.5461],
+  ["Falabella", "Falabella Mall Plaza Egaña", "Av. Larraín 5862", "La Reina", -33.4532, -70.5696],
+  ["DBS Beauty Store", "DBS Cenco Costanera Center", "Av. Andrés Bello 2447, local 1158", "Providencia", -33.418, -70.6064],
+  ["DBS Beauty Store", "DBS Parque Arauco", "Av. Presidente Kennedy 5413, local 107", "Las Condes", -33.4023, -70.5773],
+  ["Alisha Perfumes", "Alisha Mall Cenco Costanera", "Mall Cenco Costanera, Nivel 1 Local 1517", "Providencia", -33.418, -70.6064],
+  ["Farmacias Ahumada", "Ahumada Providencia", "Av. Providencia 2185", "Providencia", -33.4262, -70.6103],
+].map(([tienda, nombre, direccion, comuna, lat, lng]) => ({
+  tienda, nombre, direccion, comuna, lat, lng,
+  horario: "Lunes a Domingo: 10:00 - 20:00",
+  region: "Metropolitana",
+  telefono: "",
+  fuente: "referencial",
+})) as any[];
 
-// Horarios reales de Farmacias Ahumada (scraper_sucursales.py); el resto de cadenas queda como referencia manual
+// Locales de Farmacias Ahumada, DBS y Alisha leídos de sus páginas (scraper_sucursales.py); Falabella queda manual
 const TTL_SUCURSALES_MS = 24 * 60 * 60 * 1000;
 const REINTENTO_SUCURSALES_MS = 10 * 60 * 1000;
 let cacheSucursales: { expira: number; datos: Promise<any[]> } | null = null;
 
-async function scrapearSucursalesAhumada(): Promise<any[]> {
+async function scrapearSucursales(): Promise<any[]> {
   const inicio = Date.now();
   try {
     const proceso = await new Deno.Command("python", {
@@ -1282,13 +1378,14 @@ async function scrapearSucursalesAhumada(): Promise<any[]> {
     }).output();
     const duracion = Date.now() - inicio;
     if (proceso.code !== 0) {
-      await registrarLog("ERROR", "SCRAPER", "Fallo al obtener sucursales de Ahumada", duracion, {
+      await registrarLog("ERROR", "SCRAPER", "Fallo al obtener las sucursales de las tiendas", duracion, {
         stderr: new TextDecoder().decode(proceso.stderr),
       });
       return [];
     }
     const locales = JSON.parse(new TextDecoder().decode(proceso.stdout));
-    await registrarLog("SUCCESS", "SCRAPER", `Horarios de ${locales.length} locales de Ahumada actualizados`, duracion);
+    const porTienda = (locales as any[]).reduce((c: Record<string, number>, l) => ({ ...c, [l.tienda]: (c[l.tienda] || 0) + 1 }), {});
+    await registrarLog("SUCCESS", "SCRAPER", `Horarios de ${locales.length} locales actualizados`, duracion, porTienda);
     return Array.isArray(locales) ? locales : [];
   } catch (error: any) {
     await registrarLog("ERROR", "SCRAPER", `Excepción al obtener sucursales: ${error.message}`, Date.now() - inicio);
@@ -1299,12 +1396,14 @@ async function scrapearSucursalesAhumada(): Promise<any[]> {
 function obtenerSucursales(): Promise<any[]> {
   if (cacheSucursales && Date.now() < cacheSucursales.expira) return cacheSucursales.datos;
   const entrada = { expira: Date.now() + TTL_SUCURSALES_MS, datos: Promise.resolve(SUCURSALES_CHILE) };
-  entrada.datos = scrapearSucursalesAhumada().then((ahumada) => {
-    if (ahumada.length === 0) {
+  entrada.datos = scrapearSucursales().then((leidas) => {
+    if (leidas.length === 0) {
       entrada.expira = Date.now() + REINTENTO_SUCURSALES_MS;
       return SUCURSALES_CHILE;
     }
-    return [...SUCURSALES_CHILE.filter((s) => s.tienda !== "Farmacias Ahumada"), ...ahumada];
+    // De cada cadena que se pudo leer valen sus locales publicados; el respaldo solo queda para las demás
+    const leidasDe = new Set(leidas.map((s) => s.tienda));
+    return [...SUCURSALES_CHILE.filter((s) => !leidasDe.has(s.tienda)), ...leidas];
   });
   cacheSucursales = entrada;
   return entrada.datos;
@@ -1324,7 +1423,23 @@ app.get("/api/logs", (c) => {
   });
 });
 
+// Borrar el registro es de quien administra la app: desde el mismo equipo donde corre el backend, o con una cuenta
+// cuyo correo esté en CORREOS_ADMIN (separados por coma). Leerlo no expone datos personales y sigue abierto.
+const CORREOS_ADMIN = new Set((Deno.env.get("CORREOS_ADMIN") || "").split(",").map((e) => e.trim().toLowerCase()).filter(Boolean));
+const esEsteEquipo = (c: any) => {
+  // Detrás de un proxy (Railway) la dirección que se ve es la del proxy: nunca cuenta como este equipo
+  if (Deno.env.get("DETRAS_DE_PROXY") === "1") return false;
+  const ip = String(c.env?.remoteAddr?.hostname || "");
+  return ip === "127.0.0.1" || ip === "::1" || ip === "::ffff:127.0.0.1";
+};
+
 app.delete("/api/logs", async (c) => {
+  if (!origenPermitido(c.req.header("origin") || "")) return c.json({ success: false, error: "Origen no permitido." }, 403);
+  const usuario = esEsteEquipo(c) ? null : await cuentas.usuarioDe(c);
+  if (!esEsteEquipo(c) && !(usuario && CORREOS_ADMIN.has(usuario.email))) {
+    await registrarLog("WARN", "API", "Se intentó borrar el registro desde otro equipo sin permiso.");
+    return c.json({ success: false, error: "Solo quien administra la app puede borrar el registro." }, 403);
+  }
   memoriaLogs = [];
   await registrarLog("INFO", "API", "Historial de logs reiniciado manualmente por el usuario.");
   return c.json({ success: true, logs: memoriaLogs });
@@ -1333,36 +1448,99 @@ app.delete("/api/logs", async (c) => {
 // ─────────────────────────────────────────────
 //  GET /api/buscar?q=nombre
 // ─────────────────────────────────────────────
-app.get("/api/buscar", async (c) => {
-  const inicioTotal = Date.now();
-  const query = c.req.query("q")?.trim();
-  const sinCache = c.req.query("nocache") === "1";
-
-  if (!query || query.length < 2) {
-    return c.json(
-      { success: false, mensaje: "Parámetro 'q' requerido (mínimo 2 caracteres)." },
-      400
-    );
+// La ficha que corresponde a lo buscado, sabiendo ya qué venden las tiendas
+async function fichaConfiable(consulta: string, ficha: any, precios: any[], apiKey: string) {
+  if (ficha && precios.length && nombresDistintos(consulta, ficha.nombre || "", ficha.marca || "")) {
+    // Las tiendas venden lo buscado y la IA describió un perfume con otro nombre: no lo conoce y puso uno parecido
+    // de la marca ("Power Of You" → "Stronger With You"). Esa ficha es de otro perfume y no se usa.
+    await registrarLog("WARN", "API", `Ficha descartada: se buscó "${consulta}" y la IA describió "${ficha.nombre}"`);
+    await olvidarAlias(consulta);
+    ficha = null;
   }
+  if (ficha && otraVersionQueLaBuscada(consulta, ficha, precios)) {
+    // La IA agregó una palabra que no se buscó ("Bad Boy Elixir" → "Bad Boy Cobalt Elixir") y las tiendas venden
+    // justo lo buscado: esa ficha es de otra versión y la app abría esa en vez del perfume pedido.
+    await registrarLog("WARN", "API", `Ficha descartada: se buscó "${consulta}" y la IA describió otra versión, "${ficha.nombre}"`);
+    await olvidarAlias(consulta);
+    const marca = ficha.marca || "";
+    // Si ya se armó antes la ficha del nombre exacto (buscándolo con la marca), esa es la que corresponde
+    const exacta = fichaConocida(`${marca} ${sinPalabrasDeMarca(consulta, marca)}`);
+    if (exacta && !otraVersionQueLaBuscada(consulta, exacta, precios)) {
+      await recordarFicha(consulta, exacta);
+      return await generarFichaFragancia(consulta, apiKey); // sale de las fichas guardadas, ya normalizada
+    }
+    const nueva = await fichaDesdeTiendas(consulta, precios, apiKey, marca);
+    // La segunda respuesta también se revisa: sin esto quedaba guardada la misma versión equivocada
+    if (nueva && !otraVersionQueLaBuscada(consulta, nueva, precios)) return nueva;
+    if (nueva) await olvidarAlias(consulta);
+    return null;
+  }
+  // La IA no lo conoce pero las tiendas sí lo venden: suele ser un lanzamiento posterior a lo que la IA sabe.
+  // Se le pide la ficha de nuevo con lo que publican las tiendas; si no publican notas ni descripción, queda sin ficha.
+  return ficha || (await fichaDesdeTiendas(consulta, precios, apiKey));
+}
 
+async function fichaDesdeTiendas(consulta: string, precios: any[], apiKey: string, marca = "") {
+  const evidencia = evidenciaDeTiendas(consulta, precios, marca);
+  if (!evidencia || !(apiKey || Deno.env.get("AZURE_OPENAI_API_KEY"))) return null;
+  return await generarFichaFragancia(consulta, apiKey, evidencia).catch(() => null);
+}
+
+// Perfumes que la app ya conoce ("marca nombre"), para corregir errores de tipeo en las búsquedas
+async function nombresConocidos(): Promise<string[]> {
+  let indexados: any[] = [];
+  try {
+    indexados = JSON.parse(await Deno.readTextFile(ARCHIVO_CATALOGO_KNASTA));
+  } catch {
+    // Sin el catálogo indexado se usan los descubiertos y el diccionario de marcas
+  }
+  return [
+    ...[...indexados, ...(await cargarCatalogoDescubiertos())].map((p) => `${p.marca} ${p.nombre}`),
+    ...DICCIONARIO_MARCAS_CANONICAS.flatMap((m) => m.keywords.map((k) => `${m.marca} ${k}`)),
+  ];
+}
+
+// Búsqueda completa de un perfume. `avisar` recibe cada avance (corrección, ofertas de una tienda, ficha) para
+// que /api/buscar-vivo los envíe al navegador apenas existen; /api/buscar solo usa el resultado final.
+async function buscarCompleto(
+  escrita: string,
+  { sinCache = false, literal = false } = {},
+  avisar: (evento: any) => void = () => {},
+) {
+  const inicioTotal = Date.now();
   estadisticasSistema.total_busquedas++;
-  const cacheKey = `buscar:${query.toLowerCase()}`;
 
   // Filtro preventivo: descartar búsquedas explícitas de categorías no-perfume
-  if (esTerminoNoFragancia(query)) {
-    await registrarLog("WARN", "API", `Búsqueda bloqueada por filtro no-fragancia: "${query}"`, Date.now() - inicioTotal);
-    return c.json({
+  if (esTerminoNoFragancia(escrita)) {
+    await registrarLog("WARN", "API", `Búsqueda bloqueada por filtro no-fragancia: "${escrita}"`, Date.now() - inicioTotal);
+    return {
       success: true,
-      query,
+      query: escrita,
       es_perfume: false,
-      mensaje: `⚠️ "${query}" no corresponde a un perfume o fragancia. PerfumeScan está optimizado exclusivamente para perfumes de diseñador y fragancias originales.`,
+      mensaje: `⚠️ "${escrita}" no corresponde a un perfume o fragancia. PerfumeScan está optimizado exclusivamente para perfumes de diseñador y fragancias originales.`,
       precios: [],
       ficha: null,
       historial: [],
       reviews: [],
       sucursales: await obtenerSucursales(),
-    });
+    };
   }
+
+  // Lo que se sabía de lo escrito sale antes de todo (corregir el tipeo contra el catálogo ya toma tiempo)
+  let conocidoEnviado = false;
+  const anticipar = (consulta: string) => {
+    const conocido = conocidoEnviado ? null : resultadoConocido(consulta);
+    if (conocido) {
+      avisar({ tipo: "conocidas", ...conocido });
+      conocidoEnviado = true;
+    }
+  };
+  anticipar(escrita);
+
+  // Errores de tipeo: "savage dior" se busca como "sauvage dior" (con literal=1 se busca tal cual)
+  let query = (!literal && corregirBusqueda(escrita, await nombresConocidos())) || escrita;
+  if (query !== escrita) avisar({ tipo: "corregida", consulta: query });
+  const cacheKey = `buscar:${query.toLowerCase()}`;
 
   // Verificar Caché Inteligente
   if (!sinCache) {
@@ -1377,24 +1555,50 @@ app.get("/api/buscar", async (c) => {
       await guardarPerfumeDescubiertoEnCatalogo(query, cacheado.precios || [], cacheado.ficha);
       const mapaReviews = await cargarReviews();
       const reviewsActualizadas = mapaReviews[query.toLowerCase().trim()] || cacheado.reviews || [];
-      return c.json({
+      return {
         ...cacheado,
+        corregida: query !== escrita ? query : cacheado.corregida ?? null,
         reviews: reviewsActualizadas,
         desde_cache: true,
         latencia_ms: duracionCache,
-      });
+      };
     }
   }
 
   estadisticasSistema.cache_misses++;
   await registrarLog("INFO", "API", `Iniciando búsqueda en vivo para "${query}"...`);
 
-  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+  // Si lo escrito no se conocía, quizás sí lo corregido; lo de las tiendas lo va reemplazando
+  anticipar(query);
 
-  const [precios, ficha] = await Promise.all([
-    buscarPreciosConPython(query),
-    GEMINI_API_KEY ? generarFichaFragancia(query, GEMINI_API_KEY) : Promise.resolve(null),
-  ]);
+  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
+  const hayIA = GEMINI_API_KEY || Deno.env.get("AZURE_OPENAI_API_KEY") || fichaConocida(query);
+  const alLlegarTienda = (ofertas: any[]) => avisar({ tipo: "ofertas", ofertas });
+
+  const otroNombre = (f: any) => nombresDistintos(query, f.nombre || "", f.marca || "");
+  const fichaPendiente = (hayIA ? generarFichaFragancia(query, GEMINI_API_KEY) : Promise.resolve(null)).catch(() => null);
+  // La ficha se envía apenas está, salvo que su nombre no calce con lo buscado: eso se resuelve con las tiendas
+  fichaPendiente.then((f) => f && !otroNombre(f) && avisar({ tipo: "ficha", ficha: f }));
+  const preciosPendientes = buscarPreciosConPython(query, alLlegarTienda);
+  preciosPendientes.then(() => avisar({ tipo: "tiendas" }));
+  let [precios, ficha] = await Promise.all([preciosPendientes, fichaPendiente]);
+
+  const deLaIA = ficha;
+  ficha = await fichaConfiable(query, ficha, precios || [], GEMINI_API_KEY);
+  // Falta enviarla si salió de las tiendas, o si es la de la IA con otro nombre y se aceptó (ninguna tienda lo tiene)
+  if (ficha && (ficha !== deLaIA || otroNombre(ficha))) avisar({ tipo: "ficha", ficha });
+
+  // Ninguna tienda lo encontró, pero la IA lo reconoció con otro nombre (mal escrito de una forma que la
+  // corrección no conoce): se busca de nuevo por su nombre oficial
+  if (!literal && !precios?.length && ficha?.nombre) {
+    const marca = (ficha.marca || "").trim();
+    const oficial = ficha.nombre.toLowerCase().includes(marca.toLowerCase()) ? ficha.nombre : `${marca} ${ficha.nombre}`;
+    if (claveFicha(oficial) !== claveFicha(query)) {
+      avisar({ tipo: "corregida", consulta: oficial });
+      precios = await buscarPreciosConPython(oficial, alLlegarTienda);
+      if (precios?.length) query = oficial;
+    }
+  }
 
   const listaPrecios = precios || [];
   const historial = await guardarEnHistorial(query, listaPrecios);
@@ -1403,10 +1607,13 @@ app.get("/api/buscar", async (c) => {
   const key = query.toLowerCase().trim();
   const reviews = mapaReviews[key] || [];
   const duracionTotal = Date.now() - inicioTotal;
+  const corregida = query !== escrita ? query : null;
 
   const respuesta = {
     success: true,
     query,
+    // Lo que se buscó en vez de lo escrito, para avisarle al usuario y dejarlo buscar tal cual
+    corregida,
     desde_cache: false,
     latencia_ms: duracionTotal,
     mensaje: `${listaPrecios.length} resultado(s) encontrado(s) en múltiples tiendas (${(duracionTotal / 1000).toFixed(1)}s).`,
@@ -1419,7 +1626,12 @@ app.get("/api/buscar", async (c) => {
 
   if (listaPrecios.length > 0 || ficha) {
     guardarEnCache(cacheKey, respuesta);
+    guardarEnCache(`buscar:${query.toLowerCase()}`, respuesta);
     await guardarPerfumeDescubiertoEnCatalogo(query, listaPrecios, ficha);
+  }
+  // Solo si las tiendas respondieron: un resultado vacío por una caída no debe borrar lo que se sabía
+  if (listaPrecios.length > 0) {
+    await guardarResultadoConocido([escrita, cacheKey.slice("buscar:".length), query], { precios: listaPrecios, ficha, historial });
   }
 
   await registrarLog(
@@ -1429,7 +1641,48 @@ app.get("/api/buscar", async (c) => {
     duracionTotal
   );
 
-  return c.json(respuesta);
+  return respuesta;
+}
+
+const opcionesDeBusqueda = (c: any) => ({ sinCache: c.req.query("nocache") === "1", literal: c.req.query("literal") === "1" });
+
+app.get("/api/buscar", async (c) => {
+  const query = c.req.query("q")?.trim();
+  if (!query || query.length < 2) {
+    return c.json({ success: false, mensaje: "Parámetro 'q' requerido (mínimo 2 caracteres)." }, 400);
+  }
+  return c.json(await buscarCompleto(query, opcionesDeBusqueda(c)));
+});
+
+// La misma búsqueda, entregada por partes (una línea JSON por evento): las ofertas de cada tienda apenas responde,
+// la ficha cuando está y, al final, la respuesta completa de /api/buscar con tipo "fin"
+app.get("/api/buscar-vivo", (c) => {
+  const query = c.req.query("q")?.trim();
+  if (!query || query.length < 2) {
+    return c.json({ success: false, mensaje: "Parámetro 'q' requerido (mínimo 2 caracteres)." }, 400);
+  }
+  const codificador = new TextEncoder();
+  const cuerpo = new ReadableStream({
+    async start(control) {
+      const enviar = (evento: any) => {
+        try {
+          control.enqueue(codificador.encode(JSON.stringify(evento) + "\n"));
+        } catch {
+          // El navegador cerró la conexión: la búsqueda termina igual para dejar el resultado en caché
+        }
+      };
+      try {
+        enviar({ tipo: "fin", ...(await buscarCompleto(query, opcionesDeBusqueda(c), enviar)) });
+      } catch (err: any) {
+        enviar({ tipo: "fin", success: false, mensaje: `La búsqueda falló: ${err.message}` });
+      }
+      try { control.close(); } catch { /* ya cerrada */ }
+    },
+  });
+  // no-transform: sin él Deno comprime la respuesta y junta las líneas en vez de enviarlas una a una
+  return new Response(cuerpo, {
+    headers: { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-cache, no-transform" },
+  });
 });
 
 // ─────────────────────────────────────────────
@@ -1437,6 +1690,7 @@ app.get("/api/buscar", async (c) => {
 //  Comparador Lado a Lado entre 2 perfumes (reutiliza caché individual y ordena ofertas)
 // ─────────────────────────────────────────────
 async function obtenerDatosPerfumeParaDuelo(nombre: string, apiKey?: string, delayIaMs = 0) {
+  nombre = corregirBusqueda(nombre, await nombresConocidos()) || nombre;
   const keyIndividual = `buscar:${nombre.toLowerCase().trim()}`;
   const cacheIndividual = obtenerDeCache(keyIndividual);
 
@@ -1451,12 +1705,13 @@ async function obtenerDatosPerfumeParaDuelo(nombre: string, apiKey?: string, del
       buscarPreciosConPython(nombre),
       (async () => {
         if (!apiKey) return construirFichaRespaldoDiferenciada(nombre);
-        if (delayIaMs > 0) await new Promise((r) => setTimeout(r, delayIaMs));
+        // La espera evita dos llamadas simultáneas a la IA; con la ficha ya guardada no hay llamada
+        if (delayIaMs > 0 && !fichaConocida(nombre)) await new Promise((r) => setTimeout(r, delayIaMs));
         return generarFichaFragancia(nombre, apiKey);
       })(),
     ]);
     preciosRaw = preciosObtenidos || [];
-    ficha = fichaObtenida;
+    ficha = await fichaConfiable(nombre, fichaObtenida, preciosRaw, apiKey || "");
 
     const historial = await guardarEnHistorial(nombre, preciosRaw);
     if (preciosRaw.length > 0 || ficha) {
@@ -1555,42 +1810,120 @@ app.get("/api/comparar", async (c) => {
   return c.json(respuesta);
 });
 
-// ─────────────────────────────────────────────
-//  POST /api/reviews
-//  Permite a los usuarios publicar una review
-// ─────────────────────────────────────────────
-app.post("/api/reviews", async (c) => {
-  try {
-    const body = await c.req.json();
-    const { perfume, usuario, rating, duracion_horas, comentario } = body;
+// Ficha olfativa de un perfume, aunque nunca se haya buscado. El comparador la pide cuando la oferta elegida es otro
+// perfume que el buscado ("Angel Nova Fruitee" al comparar "A*Men") o el perfume quedó sin ficha. Sale de las fichas
+// guardadas o se le pide a la IA (y queda guardada); `ofertas` son las de ese perfume, por si la IA no lo conoce y
+// hay que armarla con lo que publican las tiendas.
+app.post("/api/ficha", async (c) => {
+  const cuerpo = await c.req.json().catch(() => ({}));
+  const nombre = String(cuerpo?.nombre || "").trim().slice(0, 150);
+  if (nombre.length < 2) return c.json({ success: false, mensaje: "Falta el nombre del perfume." }, 400);
+  // Solo los textos que usa la evidencia de tiendas, con largo acotado: vienen del navegador
+  const texto = (v: unknown, max: number) => (typeof v === "string" ? v.slice(0, max) : undefined);
+  const ofertas = (Array.isArray(cuerpo?.ofertas) ? cuerpo.ofertas : []).slice(0, 5).map((o: any) => ({
+    nombre: texto(o?.nombre, 200) || "",
+    tienda: texto(o?.tienda, 60) || "",
+    notasTienda: texto(o?.notasTienda, 600),
+    familiaTienda: texto(o?.familiaTienda, 120),
+    ingredientes: texto(o?.ingredientes, 3000),
+    descripcionTienda: texto(o?.descripcionTienda, 1500),
+  }));
 
-    if (!perfume || !usuario || !rating || !comentario) {
-      return c.json({ success: false, mensaje: "Faltan campos obligatorios" }, 400);
-    }
-
-    const mapa = await cargarReviews();
-    const key = perfume.toLowerCase().trim();
-    if (!mapa[key]) mapa[key] = [];
-
-    const nuevaReview: Review = {
-      id: Date.now().toString(),
-      perfume,
-      usuario: usuario.trim(),
-      rating: Number(rating),
-      duracion_horas: Number(duracion_horas) || 6,
-      comentario: comentario.trim(),
-      fecha: new Date().toISOString().split("T")[0],
-    };
-
-    mapa[key].unshift(nuevaReview);
-    await Deno.writeTextFile(ARCHIVO_REVIEWS, JSON.stringify(mapa, null, 2));
-    await registrarLog("SUCCESS", "API", `Nueva reseña publicada por "${usuario}" para "${perfume}" (${rating}★)`);
-
-    return c.json({ success: true, review: nuevaReview });
-  } catch (err: any) {
-    return c.json({ success: false, mensaje: err.message }, 500);
-  }
+  const inicio = Date.now();
+  const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") || "";
+  const hayIA = GEMINI_API_KEY || Deno.env.get("AZURE_OPENAI_API_KEY");
+  let ficha = hayIA || fichaConocida(nombre) ? await generarFichaFragancia(nombre, GEMINI_API_KEY).catch(() => null) : null;
+  ficha = await fichaConfiable(nombre, ficha, ofertas, GEMINI_API_KEY);
+  await registrarLog("INFO", "API", `Ficha para el comparador: "${nombre}" (${ficha ? ficha.nombre : "sin ficha"})`, Date.now() - inicio);
+  return c.json({ success: true, ficha });
 });
+
+// ─────────────────────────────────────────────
+//  /api/reviews: leer (cualquiera), publicar y borrar (solo con cuenta, cada uno las suyas)
+// ─────────────────────────────────────────────
+const guardarReviews = (mapa: Record<string, Review[]>) =>
+  Deno.writeTextFile(ARCHIVO_REVIEWS, JSON.stringify(mapa, null, 2));
+
+app.get("/api/reviews", async (c) => {
+  const clave = claveResena(c.req.query("perfume") || "");
+  if (!clave) return c.json({ reviews: [], mias: [] });
+  const usuario = await cuentas.usuarioDe(c);
+  const mapa = await cargarReviewsConAutor();
+  // También las escritas con el nombre con o sin concentración (depende de la oferta que se veía al escribirla)
+  const lista = clavesDelMismoPerfume(clave, Object.keys(mapa))
+    .flatMap((k) => mapa[k])
+    .sort((a, b) => (b.fecha || "").localeCompare(a.fecha || ""));
+  return c.json({
+    reviews: lista.map(({ autorId: _, ...r }) => r),
+    mias: usuario ? lista.filter((r) => r.autorId === usuario.id).map((r) => r.id) : [],
+  });
+});
+
+app.post("/api/reviews", async (c) => {
+  if (!origenPermitido(c.req.header("origin") || "")) return c.json({ success: false, mensaje: "Origen no permitido." }, 403);
+  const usuario = await cuentas.usuarioDe(c);
+  if (!usuario) return c.json({ success: false, mensaje: "Entra a tu cuenta para publicar una reseña." }, 401);
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ success: false, mensaje: "Datos inválidos." }, 400);
+  }
+  const datos = validarResena(body);
+  if (typeof datos === "string") return c.json({ success: false, mensaje: datos }, 400);
+  const nuevaReview: Review = {
+    id: crypto.randomUUID(),
+    ...datos,
+    autorId: usuario.id,
+    fecha: new Date().toISOString().split("T")[0],
+  };
+  const clave = claveResena(datos.perfume);
+  // Una reseña por cuenta y perfume: publicar otra vez reemplaza la anterior
+  await enCola(async () => {
+    const mapa = await cargarReviewsConAutor();
+    for (const k of clavesDelMismoPerfume(clave, Object.keys(mapa))) {
+      mapa[k] = mapa[k].filter((r) => r.autorId !== usuario.id);
+      if (!mapa[k].length) delete mapa[k];
+    }
+    mapa[clave] = [nuevaReview, ...(mapa[clave] || [])];
+    await guardarReviews(mapa);
+  });
+  await registrarLog("SUCCESS", "API", `Nueva reseña para "${datos.perfume}" (${datos.rating}★)`);
+  const { autorId: _, ...publica } = nuevaReview;
+  return c.json({ success: true, review: publica });
+});
+
+app.delete("/api/reviews/:id", async (c) => {
+  if (!origenPermitido(c.req.header("origin") || "")) return c.json({ success: false, mensaje: "Origen no permitido." }, 403);
+  const usuario = await cuentas.usuarioDe(c);
+  if (!usuario) return c.json({ success: false, mensaje: "Inicia sesión." }, 401);
+  const id = c.req.param("id");
+  const borrada = await enCola(async () => {
+    const mapa = await cargarReviewsConAutor();
+    let encontrada = false;
+    for (const clave of Object.keys(mapa)) {
+      const antes = mapa[clave].length;
+      mapa[clave] = mapa[clave].filter((r) => !(r.id === id && r.autorId === usuario.id));
+      if (mapa[clave].length !== antes) encontrada = true;
+      if (!mapa[clave].length) delete mapa[clave];
+    }
+    if (encontrada) await guardarReviews(mapa);
+    return encontrada;
+  });
+  return borrada ? c.json({ success: true }) : c.json({ success: false, mensaje: "Esa reseña no es tuya o ya no existe." }, 404);
+});
+
+// Al borrar una cuenta se borran también sus reseñas
+async function borrarReviewsDe(usuarioId: string) {
+  await enCola(async () => {
+    const mapa = await cargarReviewsConAutor();
+    for (const clave of Object.keys(mapa)) {
+      mapa[clave] = mapa[clave].filter((r) => r.autorId !== usuarioId);
+      if (!mapa[clave].length) delete mapa[clave];
+    }
+    await guardarReviews(mapa);
+  });
+}
 
 // ─────────────────────────────────────────────
 //  CATÁLOGO AUTO-APRENDIDO PERSISTENTE + BUSCADOR POR NOTAS Y FILTROS
@@ -1608,70 +1941,23 @@ async function cargarCatalogoDescubiertos(): Promise<any[]> {
   }
 }
 
-function mapearFamiliaCatalogo(familiaRaw: string): string {
-  const f = (familiaRaw || "").toLowerCase();
-  if (!f) return "Sin clasificar";
-  if (f.includes("acuát") || f.includes("acuat") || f.includes("marin") || f.includes("cítric") || f.includes("citric")) return "Cítrico / Acuático";
-  if (f.includes("gourmand") || f.includes("dulce") || f.includes("vainilla") || f.includes("cacao") || f.includes("chocolate")) return "Dulce / Gourmand";
-  if (f.includes("foug") || f.includes("azul")) return "Fougère / Azul";
-  if (f.includes("especiad") || f.includes("oriental") || f.includes("ámbar") || f.includes("ambar")) return "Ámbar / Especiado";
-  if (f.includes("floral") || f.includes("frutal")) return "Floral / Frutal";
-  return "Amaderado / Aromático";
-}
-
-function mapearNotasEstandarizadas(ficha: any, textoExtra = ""): string[] {
-  const todo = [
-    ...(ficha?.notas_salida || []),
-    ...(ficha?.notas_corazon || []),
-    ...(ficha?.notas_fondo || []),
-    ...(ficha?.acordes_principales || []),
-    ficha?.familia_olfativa || "",
-    ficha?.descripcion || "",
-    textoExtra,
-  ].join(" ").toLowerCase();
-
-  const etiquetas: string[] = [];
-  if (todo.includes("chocolate") || todo.includes("cacao") || todo.includes("pralin") || todo.includes("avellana") || todo.includes("nutella")) {
-    etiquetas.push("Chocolate / Cacao");
-  }
-  if (todo.includes("madera") || todo.includes("cedro") || todo.includes("sándalo") || todo.includes("sandalo") || todo.includes("oud") || todo.includes("vetiver") || todo.includes("pachul") || todo.includes("roble") || todo.includes("abedul") || todo.includes("guayaco")) {
-    etiquetas.push("Madera (Cedro / Sándalo / Oud)");
-  }
-  if (todo.includes("café") || todo.includes("cafe") || todo.includes("espresso") || todo.includes("cappuccino")) {
-    etiquetas.push("Café / Espresso");
-  }
-  if (todo.includes("vainilla") || todo.includes("tonka") || todo.includes("almendra")) {
-    etiquetas.push("Vainilla / Haba Tonka");
-  }
-  if (todo.includes("tabaco") || todo.includes("cuero") || todo.includes("humo") || todo.includes("incienso") || todo.includes("whisky") || todo.includes("ron")) {
-    etiquetas.push("Tabaco / Cuero / Incienso");
-  }
-  if (todo.includes("caramelo") || todo.includes("miel") || todo.includes("dátil") || todo.includes("datil") || todo.includes("algodón")) {
-    etiquetas.push("Caramelo / Miel");
-  }
-  if (todo.includes("bergamota") || todo.includes("limón") || todo.includes("limon") || todo.includes("pomelo") || todo.includes("mandarina") || todo.includes("naranja") || todo.includes("cítric") || todo.includes("citric")) {
-    etiquetas.push("Bergamota / Limón");
-  }
-  if (todo.includes("marin") || todo.includes("acuát") || todo.includes("acuat") || todo.includes("ozón") || todo.includes("sal ")) {
-    etiquetas.push("Notas Marinas");
-  }
-  if (todo.includes("pimienta") || todo.includes("canela") || todo.includes("cardamomo") || todo.includes("jengibre") || todo.includes("nuez moscada") || todo.includes("clavo") || todo.includes("especia")) {
-    etiquetas.push("Pimienta / Especias");
-  }
-  if (todo.includes("lavanda") || todo.includes("menta") || todo.includes("romero") || todo.includes("salvia")) {
-    etiquetas.push("Lavanda / Menta");
-  }
-  if (todo.includes("ámbar") || todo.includes("ambar") || todo.includes("ambroxan") || todo.includes("almizcle")) {
-    etiquetas.push("Ámbar / Ambroxan");
-  }
-  if (todo.includes("rosa") || todo.includes("jazmín") || todo.includes("jazmin") || todo.includes("iris") || todo.includes("azahar") || todo.includes("nardos") || todo.includes("peonía")) {
-    etiquetas.push("Jazmín / Rosa / Iris");
-  }
-  if (todo.includes("coco") || todo.includes("piña") || todo.includes("mango") || todo.includes("maracuyá") || todo.includes("manzana") || todo.includes("pera") || todo.includes("cereza")) {
-    etiquetas.push("Frutal / Coco / Manzana");
-  }
-
-  return etiquetas;
+// Etiquetas del catálogo que salen de la ficha de un perfume (las que usan los filtros). Se calculan igual al
+// aprender un perfume, al volver a buscarlo y al re-etiquetar el catálogo completo.
+function etiquetasDeFicha(ficha: any) {
+  const notas = [...(ficha.notas_salida || []), ...(ficha.notas_corazon || []), ...(ficha.notas_fondo || [])];
+  const ocasiones = ocasionesCatalogoDesde(ficha.ocasiones || []);
+  return {
+    familia: familiaCatalogoDesde(ficha.familia_olfativa || ""),
+    notas: etiquetasDePerfume(notas, ficha.acordes_principales || []),
+    // Todas las notas, en orden de salida a fondo (antes solo las 6 primeras: las de fondo nunca se guardaban)
+    notasDetalle: notas,
+    estaciones: ficha.estaciones || [],
+    ocasiones,
+    ocasion: ocasiones[0] || "Oficina & Diario",
+    duracionHoras: ficha.duracion_horas || 8,
+    proyeccion: ficha.proyeccion === "Bestia" ? "Bestia" : ficha.proyeccion === "Alta" ? "Alta" : "Moderada",
+    alergenosIds: (ficha.alergenos_detectados || []).map((a: any) => a.id),
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -1803,7 +2089,17 @@ async function guardarPerfumeDescubiertoEnCatalogo(nombreQuery: string, precios:
     if (validos.length === 0) return null;
 
     validos.sort((a, b) => a.precio - b.precio);
-    const mejorOferta = validos.find((p) => p.stock !== "Agotado") || validos[0];
+    // Con ficha, la oferta del catálogo tiene que ser de ese perfume. La más barata de la búsqueda puede ser otra
+    // versión o un body spray: "Eros" quedó enlazado a Eros Flame y "Black Orchid" a su body spray.
+    const delPerfume = ficha?.nombre
+      ? validos.filter((p) => esMismoPerfume(ficha.nombre, p.nombre, ficha.marca, ficha.genero))
+      : validos;
+    if (delPerfume.length === 0) return null;
+    // Una recarga, un set o un mini suele ser lo más barato, pero no es el precio del perfume ("Sauvage" quedó a
+    // $103.300 por una recarga de 300 ml)
+    const formatoNormal = delPerfume.filter((p) => !/\b(recarga|refill|set|estuche|kit|cofre|minis?|miniatura|tester|travel|body|gel|desodorante)\b/i.test(`${p.nombre} ${p.url || ""}`));
+    const candidatas = formatoNormal.length ? formatoNormal : delPerfume;
+    const mejorOferta = candidatas.find((p) => p.stock !== "Agotado") || candidatas[0];
     const marcaOficial = detectarYNormalizarMarca(nombreQuery, validos, ficha?.marca);
     const nombreBase = ficha?.nombre && !ficha.nombre.toLowerCase().includes("perfume ")
       ? ficha.nombre
@@ -1855,14 +2151,8 @@ async function guardarPerfumeDescubiertoEnCatalogo(nombreQuery: string, precios:
       ml: extraerMl(mejorOferta.nombre) ?? extraerMl((mejorOferta.url || "").replace(/[-_]/g, " ")),
       concentracion,
       genero,
-      familia: mapearFamiliaCatalogo(ficha?.familia_olfativa || ""),
-      notas: mapearNotasEstandarizadas(ficha, `${marcaOficial} ${nombreOficial}`),
-      notasDetalle: todasNotasRaw.slice(0, 6),
-      estaciones: ficha?.estaciones || ["Otoño", "Primavera"],
-      ocasion: "Oficina & Diario",
-      duracionHoras: ficha?.duracion_horas || 8,
-      proyeccion: ficha?.proyeccion === "Bestia" ? "Bestia" : ficha?.proyeccion === "Alta" ? "Alta" : "Moderada",
-      alergenosIds: (ficha?.alergenos_detectados || []).map((a: any) => a.id),
+      // Sin ficha no se inventan etiquetas (antes salían del nombre del perfume): queda "Sin clasificar"
+      ...etiquetasDeFicha(ficha || {}),
       imagen: await (async () => {
         const imgUrl = mejorOferta?.imagen || null;
         if (!imgUrl?.startsWith("http")) return imgUrl;
@@ -1878,7 +2168,11 @@ async function guardarPerfumeDescubiertoEnCatalogo(nombreQuery: string, precios:
     return await enCola(async () => {
       const actuales = await cargarCatalogoDescubiertos();
       const idx = actuales.findIndex(
-        (x) => x.id === nuevoItem.id || x.nombre.toLowerCase() === nuevoItem.nombre.toLowerCase()
+        // El mismo producto de la tienda es la misma entrada aunque el nombre haya salido distinto ("One Million" / "1 Million")
+        // y también el mismo nombre con la marca delante ("Versace Eros" / "Eros")
+        (x) => x.id === nuevoItem.id ||
+          limpiarNombrePerfume(x.nombre, marcaOficial).toLowerCase() === nuevoItem.nombre.toLowerCase() ||
+          mismoProducto(x.urlMejorPrecio, nuevoItem.urlMejorPrecio)
       );
 
       if (idx < 0) {
@@ -1897,17 +2191,9 @@ async function guardarPerfumeDescubiertoEnCatalogo(nombreQuery: string, precios:
         actualizado.stock = mismo.stock;
         actualizado.fechaPrecio = hoy;
       }
-      // Si el catálogo no tenía notas y ahora la IA entregó una ficha, se completan
-      if ((existente.notas || []).length === 0 && nuevoItem.notas.length > 0) {
-        Object.assign(actualizado, {
-          subtitulo: nuevoItem.subtitulo,
-          familia: nuevoItem.familia,
-          notas: nuevoItem.notas,
-          notasDetalle: nuevoItem.notasDetalle,
-          alergenosIds: nuevoItem.alergenosIds,
-          duracionHoras: nuevoItem.duracionHoras,
-          proyeccion: nuevoItem.proyeccion,
-        });
+      // Con una ficha se re-etiqueta siempre: el catálogo guardado puede traer etiquetas del método antiguo
+      if (ficha && nuevoItem.notasDetalle.length > 0) {
+        Object.assign(actualizado, { subtitulo: nuevoItem.subtitulo }, etiquetasDeFicha(ficha));
       }
       actuales[idx] = actualizado;
       await Deno.writeTextFile(ARCHIVO_CATALOGO_DESCUBIERTOS, JSON.stringify(actuales, null, 2));
@@ -2114,6 +2400,7 @@ async function refrescarCatalogo(limite?: number) {
   const clave = (x: any) => `${x.marca}|${x.nombre}`.toLowerCase();
   let reCotizados = 0;
   let sinMismoProducto = 0;
+  let porUrl = 0;
   try {
     let indexados: any[] = [];
     try {
@@ -2123,22 +2410,43 @@ async function refrescarCatalogo(limite?: number) {
     }
     const unicos = new Map<string, any>();
     for (const x of [...indexados, ...(await cargarCatalogoDescubiertos())]) unicos.set(clave(x), x);
-    let entradas = Array.from(unicos.values());
-    if (limite) entradas = entradas.slice(0, limite);
+    // Con cientos de perfumes, re-cotizarlos todos cada día tomaría horas: se re-cotiza una tanda diaria, primero los
+    // de precio más antiguo, así que el catálogo completo se recorre en pocos días
+    const porDia = limite ?? Number(Deno.env.get("REFRESCO_POR_DIA") || 80);
+    const entradas = Array.from(unicos.values())
+      .sort((a, b) => String(a.fechaPrecio || "").localeCompare(String(b.fechaPrecio || "")))
+      .slice(0, porDia);
     progresoRefresco.total = entradas.length;
     progresoRefresco.procesados = 0;
     await registrarLog("INFO", "SCRAPER", `Refresco de catálogo iniciado: ${entradas.length} perfumes`);
 
-    // De a 2 a la vez para no saturar a las tiendas ni competir con las búsquedas de los usuarios
+    // De a 2 a la vez para no saturar a las tiendas ni competir con las búsquedas de los usuarios, con una pausa entre
+    // tandas: muchas consultas seguidas hacen que Falabella responda 403 por unos minutos
+    const pausaMs = Number(Deno.env.get("REFRESCO_PAUSA_MS") || 4000);
     for (let i = 0; i < entradas.length; i += 2) {
+      if (i > 0) await new Promise((r) => setTimeout(r, pausaMs));
       await Promise.all(entradas.slice(i, i + 2).map(async (entrada) => {
         try {
           const consulta = `${entrada.marca} ${entrada.nombre}`;
           const precios = (await buscarPreciosConPython(consulta)) || [];
           await guardarEnHistorial(consulta, precios);
-          const mismo = precios.find(
-            (p: any) => typeof p.precio === "number" && p.precio > 0 && mismoProducto(p.url, entrada.urlMejorPrecio)
-          );
+          // Mismo producto y mismo tamaño: en Falabella los tamaños de un producto comparten número y ahora llegan
+          // como ofertas separadas; sin mirar el tamaño, un perfume de 90 ml tomaba el precio del de 30 ml
+          const mlEntrada = entrada.ml || null;
+          let mismo = precios.find((p: any) => {
+            const mlOferta = extraerMl(p.nombre || "");
+            return typeof p.precio === "number" && p.precio > 0 && mismoProducto(p.url, entrada.urlMejorPrecio) &&
+              (!mlEntrada || !mlOferta || mlOferta === mlEntrada);
+          });
+          if (!mismo) {
+            // La búsqueda no lo mostró entre los primeros resultados: se lee la página del producto
+            const directa = await cotizarUrlConPython(entrada.urlMejorPrecio);
+            if (directa?.precio > 0) {
+              mismo = directa;
+              porUrl++;
+              await guardarEnHistorial(consulta, [directa]);
+            }
+          }
           if (!mismo) {
             sinMismoProducto++;
             return;
@@ -2159,12 +2467,12 @@ async function refrescarCatalogo(limite?: number) {
       }));
     }
 
-    const resumen = { ultimo: new Date().toISOString(), perfumes: entradas.length, reCotizados, sinMismoProducto };
+    const resumen = { ultimo: new Date().toISOString(), perfumes: entradas.length, reCotizados, porUrl, sinMismoProducto };
     await Deno.writeTextFile(ARCHIVO_ESTADO_REFRESCO, JSON.stringify(resumen, null, 2));
     await registrarLog(
       "SUCCESS",
       "SCRAPER",
-      `Refresco de catálogo: ${reCotizados} precios actualizados, ${sinMismoProducto} sin el mismo producto en vivo`,
+      `Refresco de catálogo: ${reCotizados} precios actualizados (${porUrl} desde la página del producto), ${sinMismoProducto} sin el mismo producto`,
       Date.now() - inicio
     );
     return resumen;
@@ -2175,6 +2483,76 @@ async function refrescarCatalogo(limite?: number) {
     refrescoEnCurso = false;
   }
 }
+
+// Re-etiqueta los dos catálogos con la ficha de cada perfume. Pide a la IA las fichas que falten (una sola vez por
+// perfume: quedan en fichas_conocidas.json), así que se puede interrumpir y repetir sin volver a pagar las ya hechas.
+// Se ejecuta a mano: deno run -A --env server.ts --etiquetar [cuántos]
+async function etiquetarCatalogo(limite = Infinity) {
+  const apiKey = Deno.env.get("GEMINI_API_KEY") || "";
+  const resumen = { etiquetados: 0, sinFicha: 0 };
+  for (const archivo of [ARCHIVO_CATALOGO_DESCUBIERTOS, ARCHIVO_CATALOGO_KNASTA]) {
+    let items: any[] = [];
+    try {
+      items = JSON.parse(await Deno.readTextFile(archivo));
+    } catch {
+      continue;
+    }
+    items = items.slice(0, limite);
+    // De a 2 a la vez, como el refresco de precios, para no pasar el límite por minuto de la IA
+    for (let i = 0; i < items.length; i += 2) {
+      await Promise.all(items.slice(i, i + 2).map(async (item) => {
+        const consulta = `${item.marca} ${item.nombre}`;
+        const deLaIA = await generarFichaFragancia(consulta, apiKey).catch(() => null);
+        // La IA puso un perfume con otro nombre (no conoce este): esa ficha no se usa
+        if (deLaIA && nombresDistintos(consulta, deLaIA.nombre || "", deLaIA.marca || "")) await olvidarAlias(consulta);
+        // Lanzamiento que la IA no conoce: se arma con lo que publican las tiendas
+        if (!fichaConocida(consulta)) await fichaDesdeTiendas(consulta, (await buscarPreciosConPython(consulta)) || [], apiKey);
+        // Solo valen las fichas de la IA (las que quedaron guardadas), no la de respaldo por falta de cuota
+        const guardada = fichaConocida(consulta);
+        if (!guardada) {
+          resumen.sinFicha++;
+          return;
+        }
+        const etiquetas = etiquetasDeFicha(enriquecerFichaConRadarYAlergenos(structuredClone(guardada)));
+        await enCola(async () => {
+          const actuales = JSON.parse(await Deno.readTextFile(archivo));
+          const actual = actuales.find((x: any) => x.id === item.id);
+          if (!actual) return;
+          Object.assign(actual, etiquetas);
+          await Deno.writeTextFile(archivo, JSON.stringify(actuales, null, 2));
+        });
+        resumen.etiquetados++;
+      }));
+      console.log(`${archivo}: ${Math.min(i + 2, items.length)}/${items.length}`);
+    }
+  }
+  return resumen;
+}
+
+// Precio actual de un producto conocido (lo usa la ficha cuando la búsqueda no lo trajo)
+app.get("/api/cotizar", async (c) => {
+  const url = c.req.query("url") || "";
+  const nombre = c.req.query("q")?.trim();
+  const oferta = await cotizarUrlConPython(url);
+  if (!oferta) return c.json({ success: false, oferta: null });
+  if (nombre) await guardarEnHistorial(nombre, [oferta]);
+  return c.json({ success: true, oferta: { ...oferta, moneda: "CLP" } });
+});
+
+// En cuántos perfumes con lista del envase conocida aparece cada alérgeno (cada fórmula cuenta una vez,
+// aunque se vea en varios tamaños o tiendas). Da contexto a las estimaciones cuando un perfume no declara su lista.
+app.get("/api/ingredientes/frecuencias", (c) => {
+  const porFormula = new Map<string, string[]>();
+  for (const l of listasConocidas) {
+    const ids = alergenosEnIngredientes(l.ingredientes);
+    const clave = claveFormula(l.nombre, marcasConocidas);
+    // Sets, body sprays o nombres sin concentración no se cuentan: no se sabe a qué fórmula corresponden
+    if (ids && clave) porFormula.set(`${clave.linea}|${clave.concentracion}|${clave.genero}`, ids);
+  }
+  const conteo: Record<string, number> = {};
+  for (const ids of porFormula.values()) for (const id of ids) conteo[id] = (conteo[id] || 0) + 1;
+  return c.json({ total: porFormula.size, conteo });
+});
 
 // Estado para el indicador de la barra superior: avance del refresco en curso y resumen del último
 app.get("/api/refresco", async (c) => {
@@ -2526,7 +2904,17 @@ console.log("  POST /api/analizar  - Analiza foto de perfume");
 console.log("  GET  /api/buscar?q= - Busca por nombre directamente (multitienda + caché + alérgenos)");
 console.log("  GET  /api/comparar  - Compara dos perfumes lado a lado");
 console.log("  GET  /api/logs      - Telemetría y logs estructurados del sistema");
-console.log("  POST /api/reviews   - Publica una review de usuario");
+console.log("  GET/POST/DELETE /api/reviews - Reseñas (publicar y borrar piden cuenta)");
+// Modo re-etiquetado del catálogo: hace el trabajo y termina sin levantar el servidor
+if (Deno.args[0] === "--etiquetar") {
+  console.log(await etiquetarCatalogo(Number(Deno.args[1]) || Infinity));
+  Deno.exit(0);
+}
+// Modo traducción de las fichas guardadas: igual, con el servidor apagado (si no, el servidor pisa el archivo)
+if (Deno.args[0] === "--traducir") {
+  console.log(await traducirFichasGuardadas(Number(Deno.args[1]) || Infinity));
+  Deno.exit(0);
+}
 obtenerSucursales(); // precarga los horarios en segundo plano para no demorar la primera búsqueda
 // Refresco diario: primera revisión 2 min después de iniciar (para no competir con el arranque) y luego cada hora
 setTimeout(revisarRefrescoDiario, Number(Deno.env.get("REFRESCO_ESPERA_MS")) || 2 * 60 * 1000);

@@ -13,6 +13,11 @@ import {
   Heart,
   ExternalLink,
 } from 'lucide-react';
+import { paginasVisibles } from '../paginas';
+import { etiquetasDeNotas, etiquetasDePerfume, familiaCatalogoDesde, ocasionesCatalogoDesde } from '../etiquetas';
+import { coincideFlexible } from '../busquedaFlexible';
+import { t } from '../i18n.ts';
+import { API_BASE } from '../api.ts';
 
 export interface FraganciaCatalogoItem {
   id: string;
@@ -35,6 +40,8 @@ export interface FraganciaCatalogoItem {
   notasDetalle?: string[];
   estaciones: ('Verano' | 'Primavera' | 'Otoño' | 'Invierno')[];
   ocasion: 'Oficina & Diario' | 'Noche & Fiesta' | 'Citas Románticas' | 'Deporte & Calor' | 'Eventos Formales';
+  // Todas las ocasiones según la ficha; si falta (catálogo base) vale solo `ocasion`
+  ocasiones?: FraganciaCatalogoItem['ocasion'][];
   duracionHoras: number;
   proyeccion: 'Moderada' | 'Alta' | 'Bestia';
   alergenosIds: string[];
@@ -728,7 +735,7 @@ function SeccionAcordeonFiltro({ titulo, abiertoInicial = true, children }: Secc
         onClick={() => setAbierto(!abierto)}
         aria-expanded={abierto}
       >
-        <span>{titulo}</span>
+        <span>{t(titulo)}</span>
         {abierto ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
       </button>
       {abierto && <div className="m3-facet-body">{children}</div>}
@@ -737,7 +744,7 @@ function SeccionAcordeonFiltro({ titulo, abiertoInicial = true, children }: Secc
 }
 
 // v2: la v1 guardaba perfumes sin precio de tienda (con $79.990 inventado); se descarta
-const CLAVE_CATALOGO_APRENDIDO_LOCAL = 'perfumescan_catalogo_aprendido_v2';
+const CLAVE_CATALOGO_APRENDIDO_LOCAL = 'perfumescan_catalogo_aprendido_v3';
 try {
   localStorage.removeItem('perfumescan_catalogo_aprendido_v1');
 } catch {}
@@ -836,11 +843,16 @@ export function detectarMarcaDesdeBusqueda(query: string, precios: any[] = [], f
 }
 
 // Fusiona catálogos por marca + nombre; ante el mismo perfume gana la versión nueva (datos más recientes)
+// Mismo perfume en el catálogo: mismo nombre y género. "Allure" de hombre y de mujer son dos perfumes; unisex va con
+// hombre porque las tiendas suelen publicar los unisex en hombre y no hay un unisex y un masculino con igual nombre.
+export const claveCatalogo = (item: { nombre: string; genero?: string }) =>
+  `${item.nombre.toLowerCase()}|${item.genero === 'Femenino' ? 'f' : 'm'}`;
+
 export function fusionarCatalogos(previos: FraganciaCatalogoItem[], nuevos: FraganciaCatalogoItem[]): FraganciaCatalogoItem[] {
   const mapa = new Map<string, FraganciaCatalogoItem>();
   for (const item of [...previos, ...nuevos]) {
     if (item && item.nombre) {
-      mapa.set(`${(item.marca || '').toLowerCase()}-${item.nombre.toLowerCase()}`, item);
+      mapa.set(claveCatalogo(item), item);
     }
   }
   return Array.from(mapa.values());
@@ -853,38 +865,8 @@ export function mlDesdeTexto(texto: string): number | null {
   return ml >= 5 && ml <= 500 ? ml : null;
 }
 
-// Traduce notas en texto libre (de la IA o de la tienda) a las etiquetas del catálogo
-export function etiquetasDeNotas(texto: string): string[] {
-  const t = texto.toLowerCase();
-  const tiene = (...kws: string[]) => kws.some(k => t.includes(k));
-  const etiquetas: string[] = [];
-  if (tiene('chocolate', 'cacao', 'pralin', 'avellana')) etiquetas.push('Chocolate / Cacao');
-  if (tiene('madera', 'cedro', 'sándalo', 'sandalo', 'oud', 'vetiver', 'pachul')) etiquetas.push('Madera (Cedro / Sándalo / Oud)');
-  if (tiene('café', 'cafe', 'espresso')) etiquetas.push('Café / Espresso');
-  if (tiene('vainilla', 'tonka', 'almendra')) etiquetas.push('Vainilla / Haba Tonka');
-  if (tiene('tabaco', 'cuero', 'incienso')) etiquetas.push('Tabaco / Cuero / Incienso');
-  if (tiene('caramelo', 'miel', 'dátil')) etiquetas.push('Caramelo / Miel');
-  if (tiene('bergamota', 'limón', 'limon', 'pomelo', 'naranja')) etiquetas.push('Bergamota / Limón');
-  if (tiene('marin', 'acuát', 'acuat')) etiquetas.push('Notas Marinas');
-  if (tiene('pimienta', 'canela', 'cardamomo', 'especia')) etiquetas.push('Pimienta / Especias');
-  if (tiene('lavanda', 'menta')) etiquetas.push('Lavanda / Menta');
-  if (tiene('ámbar', 'ambar', 'ambroxan', 'almizcle')) etiquetas.push('Ámbar / Ambroxan');
-  if (tiene('rosa', 'jazmín', 'jazmin', 'iris', 'azahar')) etiquetas.push('Jazmín / Rosa / Iris');
-  if (tiene('coco', 'piña', 'manzana', 'pera', 'cereza')) etiquetas.push('Frutal / Coco / Manzana');
-  return etiquetas;
-}
-
-// Traduce una familia olfativa en texto libre (ej: "Aromática Fougère Especiada") a una familia del catálogo
-export function familiaCatalogoDesde(familiaTexto: string): FraganciaCatalogoItem['familia'] {
-  const f = familiaTexto.toLowerCase();
-  if (!f) return 'Sin clasificar';
-  if (f.includes('acuát') || f.includes('cítric')) return 'Cítrico / Acuático';
-  if (f.includes('gourmand') || f.includes('dulce') || f.includes('vainilla')) return 'Dulce / Gourmand';
-  if (f.includes('foug') || f.includes('azul')) return 'Fougère / Azul';
-  if (f.includes('especiad') || f.includes('ámbar') || f.includes('oriental')) return 'Ámbar / Especiado';
-  if (f.includes('floral') || f.includes('frutal')) return 'Floral / Frutal';
-  return 'Amaderado / Aromático';
-}
+// Las etiquetas y familias del catálogo se calculan en un solo lugar, compartido con el backend
+export { etiquetasDeNotas, etiquetasDePerfume, familiaCatalogoDesde };
 
 export function aprenderPerfumeEnCatalogoLocal(query: string, precios: any[] = [], ficha: any = null): FraganciaCatalogoItem | null {
   try {
@@ -910,9 +892,9 @@ export function aprenderPerfumeEnCatalogoLocal(query: string, precios: any[] = [
       ...(ficha?.notas_corazon || []),
       ...(ficha?.notas_fondo || []),
     ];
-    const textoNotas = `${todasNotasRaw.join(' ')} ${(ficha?.acordes_principales || []).join(' ')} ${ficha?.familia_olfativa || ''} ${nombreFinal}`.toLowerCase();
-
-    const notasEstandar = etiquetasDeNotas(textoNotas);
+    // Solo notas y acordes: la familia y el nombre del perfume metían etiquetas que no eran ("Coco Mademoiselle")
+    const notasEstandar = etiquetasDePerfume(todasNotasRaw, ficha?.acordes_principales || []);
+    const ocasiones = ocasionesCatalogoDesde(ficha?.ocasiones || []);
     const familia = familiaCatalogoDesde(ficha?.familia_olfativa || '');
 
     const concRaw = (ficha?.concentracion || mejor?.nombre || query).toLowerCase();
@@ -940,9 +922,10 @@ export function aprenderPerfumeEnCatalogoLocal(query: string, precios: any[] = [
       genero,
       familia,
       notas: notasEstandar,
-      notasDetalle: todasNotasRaw.slice(0, 5),
-      estaciones: ['Otoño', 'Primavera'],
-      ocasion: 'Oficina & Diario',
+      notasDetalle: todasNotasRaw,
+      estaciones: ficha?.estaciones || [],
+      ocasiones,
+      ocasion: ocasiones[0] || 'Oficina & Diario',
       duracionHoras: ficha?.duracion_horas || 8,
       proyeccion: ficha?.proyeccion === 'Bestia' ? 'Bestia' : ficha?.proyeccion === 'Alta' ? 'Alta' : 'Moderada',
       alergenosIds: (ficha?.alergenos_detectados || []).map((a: any) => a.id),
@@ -972,21 +955,21 @@ interface Props {
   apiBase?: string;
   alergiasUsuario: string[];
   notasPersonalizadas: string[];
-  listaGuardadosNombres: string[];
+  estaEnLista: (item: FraganciaCatalogoItem) => boolean;
   onCotizarEnVivo: (nombre: string) => void;
   onInspeccionarPerfume?: (item: FraganciaCatalogoItem, catalogoCompleto: FraganciaCatalogoItem[]) => void;
   onGuardarEnLista: (item: FraganciaCatalogoItem) => void;
-  onComparar: (nombre: string) => void;
+  onComparar: (nombre: string, item: FraganciaCatalogoItem) => void;
   onCatalogoActualizado?: (catalogo: FraganciaCatalogoItem[]) => void;
 }
 
 const ITEMS_POR_PAGINA = 30;
 
 export const CatalogoFiltrosSidebar: React.FC<Props> = ({
-  apiBase = 'http://localhost:8000',
+  apiBase = API_BASE,
   alergiasUsuario,
   notasPersonalizadas,
-  listaGuardadosNombres,
+  estaEnLista,
   onCotizarEnVivo,
   onInspeccionarPerfume,
   onGuardarEnLista,
@@ -1066,7 +1049,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
   // Ejecutar crawler masivo de categorías en las 4 tiendas (Estilo Knasta)
   const sincronizarCatalogoKnasta = async () => {
     setDescubriendoEnVivo(true);
-    setMensajeDescubrimiento('Indexando catálogos completos de Falabella, DBS, Alisha y Ahumada (Modo Knasta)...');
+    setMensajeDescubrimiento(t('Actualizando los precios del catálogo en Falabella, DBS, Alisha y Ahumada...'));
     try {
       const resp = await fetch(`${apiBase}/api/indexar-knasta`, { method: 'POST' });
       const data = await resp.json();
@@ -1078,7 +1061,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
           } catch {}
           return combinados;
         });
-        setMensajeDescubrimiento(data.mensaje || '¡Catálogo masivo sincronizado con éxito!');
+        setMensajeDescubrimiento(t('¡Catálogo sincronizado con éxito!'));
       }
     } catch {
       // Si el backend no fue reiniciado aún, recargar desde el snapshot /catalogo_knasta.json
@@ -1086,7 +1069,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
         const r = await fetch('/catalogo_knasta.json');
         const items = await r.json();
         if (Array.isArray(items)) {
-          setMensajeDescubrimiento(`Catálogo sincronizado: ${items.length} perfumes y múltiples marcas cargadas.`);
+          setMensajeDescubrimiento(t('Catálogo sincronizado: {n} perfumes de varias marcas.', { n: items.length }));
         }
       } catch {}
     } finally {
@@ -1099,10 +1082,10 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
   const catalogoCompleto = useMemo(() => {
     const mapa = new Map<string, FraganciaCatalogoItem>();
     for (const item of CATALOGO_FRAGANCIAS_CHILE) {
-      mapa.set(item.nombre.toLowerCase(), item);
+      mapa.set(claveCatalogo(item), item);
     }
     for (const dyn of itemsDinamicos) {
-      const k = dyn.nombre.toLowerCase();
+      const k = claveCatalogo(dyn);
       if (!mapa.has(k)) {
         mapa.set(k, dyn);
       } else if (dyn.precioReferencia && dyn.urlMejorPrecio) {
@@ -1133,7 +1116,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
   // Descubrir más perfumes reales con IA + Scraper de las 4 tiendas según los filtros marcados
   const descubrirMasEnTiendasConIA = async () => {
     setDescubriendoEnVivo(true);
-    setMensajeDescubrimiento('Consultando al Sommelier IA y cotizando en Falabella, DBS, Alisha y Ahumada...');
+    setMensajeDescubrimiento(t('Buscando perfumes con esas notas y cotizándolos en Falabella, DBS, Alisha y Ahumada...'));
     try {
       const resp = await fetch(`${apiBase}/api/descubrir-por-filtros`, {
         method: 'POST',
@@ -1152,16 +1135,16 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
         setItemsDinamicos(prev => {
           const mapa = new Map<string, FraganciaCatalogoItem>();
           for (const p of [...data.items, ...prev]) {
-            mapa.set(p.nombre.toLowerCase(), p);
+            mapa.set(claveCatalogo(p), p);
           }
           return Array.from(mapa.values());
         });
-        setMensajeDescubrimiento(data.mensaje || `¡Nuevas fragancias añadidas al catálogo!`);
+        setMensajeDescubrimiento(t('¡Nuevas fragancias añadidas al catálogo!'));
       } else {
-        setMensajeDescubrimiento('No se encontraron fragancias adicionales.');
+        setMensajeDescubrimiento(t('No se encontraron fragancias adicionales.'));
       }
     } catch {
-      setMensajeDescubrimiento('El servidor local no respondió; filtrando sobre el catálogo integrado.');
+      setMensajeDescubrimiento(t('El servidor local no respondió; filtrando sobre el catálogo integrado.'));
     } finally {
       setDescubriendoEnVivo(false);
       setTimeout(() => setMensajeDescubrimiento(null), 5000);
@@ -1228,7 +1211,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
 
   const conteoPorOcasion = useMemo(() => {
     const mapa = new Map<string, number>();
-    catalogoCompleto.forEach(p => mapa.set(p.ocasion, (mapa.get(p.ocasion) || 0) + 1));
+    catalogoCompleto.forEach(p => (p.ocasiones ?? [p.ocasion]).forEach(o => mapa.set(o, (mapa.get(o) || 0) + 1)));
     return Array.from(mapa.entries());
   }, [catalogoCompleto]);
 
@@ -1237,10 +1220,8 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
     const filtradas = catalogoCompleto.filter(item => {
       const textoCompletoItem = `${item.nombre} ${item.marca} ${item.subtitulo} ${(item.notas || []).join(' ')} ${(item.notasDetalle || []).join(' ')}`.toLowerCase();
 
-      if (filtroTextoRapido.trim()) {
-        const q = filtroTextoRapido.toLowerCase();
-        if (!textoCompletoItem.includes(q)) return false;
-      }
+      // Tolera tildes, palabras a medio escribir y errores de tipeo ("savage", "vainila")
+      if (filtroTextoRapido.trim() && !coincideFlexible(textoCompletoItem, filtroTextoRapido)) return false;
 
       if (notaLibreInput.trim()) {
         const terminosLibres = notaLibreInput
@@ -1250,8 +1231,8 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
           .filter(Boolean);
         const cumpleLibre =
           modoNotas === 'AND'
-            ? terminosLibres.every(t => textoCompletoItem.includes(t))
-            : terminosLibres.some(t => textoCompletoItem.includes(t));
+            ? terminosLibres.every(t => coincideFlexible(textoCompletoItem, t))
+            : terminosLibres.some(t => coincideFlexible(textoCompletoItem, t));
         if (!cumpleLibre) return false;
       }
 
@@ -1260,7 +1241,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
       if (marcasSel.length > 0 && !marcasSel.includes(item.marca)) return false;
       if (generosSel.length > 0 && !generosSel.includes(item.genero)) return false;
       if (concentracionSel.length > 0 && !concentracionSel.includes(item.concentracion)) return false;
-      if (ocasionesSel.length > 0 && !ocasionesSel.includes(item.ocasion)) return false;
+      if (ocasionesSel.length > 0 && !(item.ocasiones ?? [item.ocasion]).some(o => ocasionesSel.includes(o))) return false;
 
       if (notasSel.length > 0) {
         if (modoNotas === 'AND') {
@@ -1382,17 +1363,17 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
   const notasVisibles = mostrarTodasNotas ? conteoPorNota : conteoPorNota.slice(0, 6);
 
   return (
-    <section ref={refInicioCatalogo} className="m3-catalog-explorer-wrap" aria-label="Explorador de Fragancias por Notas y Filtros">
+    <section ref={refInicioCatalogo} className="m3-catalog-explorer-wrap" aria-label={t('Explorador de Fragancias por Notas y Filtros')}>
       {/* Cabecera limpia del Catálogo */}
       <div className="m3-catalog-topbar">
         <div>
           <h3 className="m3-editorial-title" style={{ margin: 0, fontSize: '1.3rem', color: 'var(--m3-text-primary)', fontWeight: 800 }}>
-            Catálogo de Fragancias ({fraganciasFiltradas.length})
+            {t('Catálogo de Fragancias ({n})', { n: fraganciasFiltradas.length })}
           </h3>
           <span style={{ fontSize: '12px', color: 'var(--m3-text-secondary)', fontWeight: 600 }}>
             {fraganciasFiltradas.length > 0
-              ? `Mostrando ${indiceInicio + 1}–${Math.min(indiceInicio + ITEMS_POR_PAGINA, fraganciasFiltradas.length)} de ${fraganciasFiltradas.length} · Página ${paginaSegura} de ${totalPaginas}`
-              : 'Sin coincidencias con los filtros actuales'}
+              ? t('Mostrando {a}–{b} de {total} · Página {p} de {pp}', { a: indiceInicio + 1, b: Math.min(indiceInicio + ITEMS_POR_PAGINA, fraganciasFiltradas.length), total: fraganciasFiltradas.length, p: paginaSegura, pp: totalPaginas })
+              : t('Sin coincidencias con los filtros actuales')}
           </span>
         </div>
 
@@ -1402,7 +1383,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
             className="m3-btn m3-btn-tonal m3-mobile-filter-toggle"
             onClick={() => setSidebarMovilAbierto(!sidebarMovilAbierto)}
           >
-            <SlidersHorizontal size={14} /> Filtros {totalFiltrosActivos > 0 ? `(${totalFiltrosActivos})` : ''}
+            <SlidersHorizontal size={14} /> {t('Filtros')} {totalFiltrosActivos > 0 ? `(${totalFiltrosActivos})` : ''}
           </button>
 
           {totalFiltrosActivos > 0 && (
@@ -1412,13 +1393,13 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
               className="m3-btn m3-btn-tonal"
               style={{ fontSize: '12px', padding: '7px 12px', color: '#dc2626' }}
             >
-              <RotateCcw size={13} /> Limpiar ({totalFiltrosActivos})
+              <RotateCcw size={13} /> {t('Limpiar ({n})', { n: totalFiltrosActivos })}
             </button>
           )}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <label htmlFor="select-orden-catalogo" style={{ fontSize: '12px', fontWeight: 700, color: 'var(--m3-text-secondary)' }}>
-              Ordenar:
+              {t('Ordenar:')}
             </label>
             <select
               id="select-orden-catalogo"
@@ -1435,11 +1416,11 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                 cursor: 'pointer',
               }}
             >
-              <option value="destacados">Más Cotizados en Chile</option>
-              <option value="precio_asc">Precio: Menor a Mayor</option>
-              <option value="precio_desc">Precio: Mayor a Menor</option>
-              <option value="duracion">Mayor Fijación (Horas)</option>
-              <option value="ml_eficiencia">Mejor Eficiencia ($/ml)</option>
+              <option value="destacados">{t('Más Cotizados en Chile')}</option>
+              <option value="precio_asc">{t('Precio: Menor a Mayor')}</option>
+              <option value="precio_desc">{t('Precio: Mayor a Menor')}</option>
+              <option value="duracion">{t('Mayor Fijación (Horas)')}</option>
+              <option value="ml_eficiencia">{t('Mejor Eficiencia ($/ml)')}</option>
             </select>
           </div>
         </div>
@@ -1480,7 +1461,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
               />
               <span className="m3-facet-label-text" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                 <ShieldCheck size={14} style={{ color: '#16a34a', flexShrink: 0 }} />
-                Solo compatibles con mi piel
+                {t('Sin mis alérgenos en sus notas')}
               </span>
             </label>
           </div>
@@ -1512,9 +1493,9 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   background: modoNotas === 'AND' ? 'var(--m3-primary)' : 'transparent',
                   color: modoNotas === 'AND' ? '#ffffff' : 'var(--m3-text-secondary)',
                 }}
-                title="Muestra perfumes que contengan TODAS las notas marcadas al mismo tiempo (ej: Chocolate Y Madera)"
+                title={t('Muestra perfumes que contengan TODAS las notas marcadas al mismo tiempo (ej: Chocolate Y Madera)')}
               >
-                Combinar todas (Y)
+                {t('Combinar todas (Y)')}
               </button>
               <button
                 type="button"
@@ -1529,9 +1510,9 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   background: modoNotas === 'OR' ? 'var(--m3-primary)' : 'transparent',
                   color: modoNotas === 'OR' ? '#ffffff' : 'var(--m3-text-secondary)',
                 }}
-                title="Muestra perfumes que tengan cualquiera de las notas marcadas (ej: Chocolate O Madera)"
+                title={t('Muestra perfumes que tengan cualquiera de las notas marcadas (ej: Chocolate O Madera)')}
               >
-                Cualquiera (O)
+                {t('Cualquiera (O)')}
               </button>
             </div>
 
@@ -1544,7 +1525,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   onChange={() => toggleValor(setNotasSel, nota)}
                 />
                 <span className="m3-facet-label-text">
-                  {nota} <span className="m3-facet-count">({count})</span>
+                  {t(nota)} <span className="m3-facet-count">({count})</span>
                 </span>
               </label>
             ))}
@@ -1555,7 +1536,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                 className="m3-facet-show-more"
                 onClick={() => setMostrarTodasNotas(!mostrarTodasNotas)}
               >
-                {mostrarTodasNotas ? '- Mostrar menos' : `+ Mostrar más (${conteoPorNota.length - 6})`}
+                {mostrarTodasNotas ? t('- Mostrar menos') : t('+ Mostrar más ({n})', { n: conteoPorNota.length - 6 })}
               </button>
             )}
 
@@ -1563,7 +1544,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
             <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
               <input
                 type="text"
-                placeholder="Otra nota (ej: cacao, cedro, miel...)"
+                placeholder={t('Otra nota (ej: cacao, cedro, miel...)')}
                 value={notaLibreInput}
                 onChange={e => setNotaLibreInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && descubrirMasEnTiendasConIA()}
@@ -1585,7 +1566,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                 style={{ width: '100%', padding: '7px 10px', fontSize: '11.5px', justifyContent: 'center' }}
               >
                 <Sparkles size={13} />
-                {descubriendoEnVivo ? 'Buscando en tiendas...' : '+ Descubrir más con estos filtros'}
+                {descubriendoEnVivo ? t('Buscando en tiendas...') : t('+ Descubrir más con estos filtros')}
               </button>
             </div>
           </SeccionAcordeonFiltro>
@@ -1601,7 +1582,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   onChange={() => toggleValor(setFamiliasSel, familia)}
                 />
                 <span className="m3-facet-label-text">
-                  {familia} <span className="m3-facet-count">({count})</span>
+                  {t(familia)} <span className="m3-facet-count">({count})</span>
                 </span>
               </label>
             ))}
@@ -1622,7 +1603,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                     onChange={() => toggleValor(setRangosPrecioSel, r.id)}
                   />
                   <span className="m3-facet-label-text">
-                    {r.label} <span className="m3-facet-count">({count})</span>
+                    {t(r.label)} <span className="m3-facet-count">({count})</span>
                   </span>
                 </label>
               );
@@ -1630,7 +1611,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
           </SeccionAcordeonFiltro>
 
           {/* 4. Casa Perfumista / Marca (auto-aprende nuevas marcas buscadas o registradas) */}
-          <SeccionAcordeonFiltro titulo={`Casa Perfumista / Marca (${conteoPorMarca.length})`} abiertoInicial={true}>
+          <SeccionAcordeonFiltro titulo={t('Casa Perfumista / Marca ({n})', { n: conteoPorMarca.length })} abiertoInicial={true}>
             {marcasVisibles.map(([marca, count]) => {
               const esMarcaAprendida = !MARCAS_INICIALES_SET.has(marca.toLowerCase());
               return (
@@ -1653,9 +1634,9 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                           color: 'var(--m3-primary)',
                           fontWeight: 800,
                         }}
-                        title="Marca aprendida automáticamente a partir de búsquedas registradas"
+                        title={t('Marca aprendida automáticamente a partir de búsquedas registradas')}
                       >
-                        Aprendida
+                        {t('Aprendida')}
                       </span>
                     )}
                   </span>
@@ -1668,7 +1649,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                 className="m3-facet-show-more"
                 onClick={() => setMostrarTodasMarcas(!mostrarTodasMarcas)}
               >
-                {mostrarTodasMarcas ? '- Mostrar menos' : `+ Mostrar más (${conteoPorMarca.length - 7})`}
+                {mostrarTodasMarcas ? t('- Mostrar menos') : t('+ Mostrar más ({n})', { n: conteoPorMarca.length - 7 })}
               </button>
             )}
             <button
@@ -1677,9 +1658,9 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
               disabled={descubriendoEnVivo}
               className="m3-btn m3-btn-tonal"
               style={{ width: '100%', marginTop: '6px', padding: '6px 8px', fontSize: '11px', justifyContent: 'center' }}
-              title="Recorre las páginas de categoría de Falabella, DBS, Alisha y Ahumada para indexar decenas de marcas y perfumes"
+              title={t('Recorre las páginas de categoría de Falabella, DBS, Alisha y Ahumada para indexar decenas de marcas y perfumes')}
             >
-              {descubriendoEnVivo ? 'Indexando tiendas...' : '↻ Sincronizar tiendas (Modo Knasta)'}
+              {descubriendoEnVivo ? t('Actualizando precios...') : t('↻ Actualizar precios del catálogo')}
             </button>
           </SeccionAcordeonFiltro>
 
@@ -1711,7 +1692,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   onChange={() => toggleValor(setGenerosSel, gen)}
                 />
                 <span className="m3-facet-label-text">
-                  {gen} <span className="m3-facet-count">({count})</span>
+                  {t(gen)} <span className="m3-facet-count">({count})</span>
                 </span>
               </label>
             ))}
@@ -1728,7 +1709,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   onChange={() => toggleValor(setOcasionesSel, oc)}
                 />
                 <span className="m3-facet-label-text">
-                  {oc} <span className="m3-facet-count">({count})</span>
+                  {t(oc)} <span className="m3-facet-count">({count})</span>
                 </span>
               </label>
             ))}
@@ -1742,17 +1723,17 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '14px', padding: '10px 14px', background: 'var(--m3-surface-container-low)', borderRadius: '10px', border: '1px solid var(--m3-outline-variant)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', fontSize: '12px' }}>
                 <strong style={{ color: 'var(--m3-text-primary)' }}>
-                  Buscando fragancias con ({modoNotas === 'AND' ? 'TODAS estas notas' : 'cualquiera de estas notas'}):
+                  {modoNotas === 'AND' ? t('Buscando fragancias con (TODAS estas notas):') : t('Buscando fragancias con (cualquiera de estas notas):')}
                 </strong>
                 {notasSel.map((n, idx) => (
                   <React.Fragment key={n}>
                     {idx > 0 && (
                       <span style={{ fontWeight: 800, color: 'var(--m3-primary)' }}>
-                        {modoNotas === 'AND' ? '+' : 'o'}
+                        {modoNotas === 'AND' ? '+' : t('o')}
                       </span>
                     )}
                     <span style={{ background: 'var(--m3-primary-container)', color: 'var(--m3-primary)', padding: '2px 9px', borderRadius: '99px', fontWeight: 700 }}>
-                      {n}
+                      {t(n)}
                     </span>
                   </React.Fragment>
                 ))}
@@ -1771,10 +1752,10 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
               }}
             >
               <p className="m3-editorial-title" style={{ margin: '0 0 8px 0', fontSize: '1.2rem', fontWeight: 700, color: 'var(--m3-text-primary)' }}>
-                No hay fragancias locales con esa combinación exacta todavía
+                {t('No hay fragancias locales con esa combinación exacta todavía')}
               </p>
               <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: 'var(--m3-text-secondary)' }}>
-                Pulsa el botón para que nuestro Sommelier IA busque en el mercado chileno perfumes que tengan exactamente esas notas y los agregue al catálogo:
+                {t('Pulsa el botón para buscar en el mercado chileno perfumes que tengan exactamente esas notas y agregarlos al catálogo:')}
               </p>
               <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button
@@ -1784,10 +1765,10 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   className="m3-btn m3-btn-primary"
                 >
                   <Sparkles size={14} />
-                  {descubriendoEnVivo ? 'Buscando en tiendas e IA...' : 'Descubrir perfumes con estos filtros (IA + Tiendas)'}
+                  {descubriendoEnVivo ? t('Buscando en tiendas e IA...') : t('Descubrir perfumes con estos filtros (IA + Tiendas)')}
                 </button>
                 <button type="button" onClick={limpiarTodosLosFiltros} className="m3-btn m3-btn-tonal">
-                  <RotateCcw size={14} /> Restablecer filtros
+                  <RotateCcw size={14} /> {t('Restablecer filtros')}
                 </button>
               </div>
             </div>
@@ -1796,9 +1777,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
               <div className="m3-showcase-grid">
                 {fraganciasPaginadas.map(item => {
                   const tieneConflictoAlergia = chocaConAlergia(item);
-                  const yaEnLista = listaGuardadosNombres.some(
-                    n => n.toLowerCase() === item.nombre.toLowerCase()
-                  );
+                  const yaEnLista = estaEnLista(item);
                   const abrevConc = item.concentracion.includes('Elixir')
                     ? 'Parfum'
                     : item.concentracion.includes('Toilette')
@@ -1810,7 +1789,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                     : 'Falabella';
                   const colorPuntoTienda =
                     tiendaLabel.includes('Falabella')
-                      ? '#84cc16'
+                      ? 'var(--m3-success)'
                       : tiendaLabel.includes('DBS')
                       ? '#ec4899'
                       : tiendaLabel.includes('Alisha')
@@ -1854,7 +1833,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                             e.stopPropagation();
                             onGuardarEnLista(item);
                           }}
-                          title={yaEnLista ? 'En tu lista de seguimiento' : 'Guardar en mi lista de seguimiento'}
+                          title={yaEnLista ? t('Guardado en tus Favoritos') : t('Guardar en Favoritos')}
                         >
                           <Heart size={15} fill={yaEnLista ? '#ef4444' : 'none'} color={yaEnLista ? '#ef4444' : '#334155'} />
                         </button>
@@ -1874,7 +1853,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                         {/* Píldora Inferior Izquierda: Su mejor precio o Alerta Alergia */}
                         {tieneConflictoAlergia ? (
                           <span className="knasta-best-price-pill danger">
-                            <ShieldAlert size={11} /> Contiene alérgeno
+                            <ShieldAlert size={11} /> {t('Contiene alérgeno')}
                           </span>
                         ) : (
                           <span className="knasta-best-price-pill">
@@ -1905,7 +1884,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
 
                           {/* Fuente del dato */}
                           <div className="knasta-old-price" style={{ textDecoration: 'none' }}>
-                            Precio publicado en {item.tiendaMejorPrecio || 'Falabella'}
+                            {t('Precio publicado en {tienda}', { tienda: item.tiendaMejorPrecio || 'Falabella' })}
                             {item.fechaPrecio ? ` · al ${item.fechaPrecio.split('-').reverse().join('/')}` : ''}
                           </div>
 
@@ -1919,16 +1898,16 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                                 abrirInspectorPerfume(item);
                               }}
                             >
-                              Ver Ficha y Oferta <ExternalLink size={13} />
+                              {t('Ver Ficha y Oferta')} <ExternalLink size={13} />
                             </button>
                             <button
                               type="button"
                               className="knasta-secondary-icon-btn"
                               onClick={e => {
                                 e.stopPropagation();
-                                onComparar(`${item.marca} ${item.nombre}`);
+                                onComparar(`${item.marca} ${item.nombre}`, item);
                               }}
-                              title="Comparar frente a otro perfume (VS)"
+                              title={t('Comparar frente a otro perfume (VS)')}
                             >
                               <Scale size={15} />
                             </button>
@@ -1943,7 +1922,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
               {/* Barra de Paginación (de 30 en 30: Página 1 de N) */}
               {totalPaginas > 1 && (
                 <nav
-                  aria-label="Paginación del catálogo"
+                  aria-label={t('Paginación del catálogo')}
                   style={{
                     marginTop: '24px',
                     padding: '14px 18px',
@@ -1958,7 +1937,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                   }}
                 >
                   <span style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--m3-text-secondary)' }}>
-                    Página <strong>{paginaSegura}</strong> de <strong>{totalPaginas}</strong> · Mostrando {indiceInicio + 1}–{Math.min(indiceInicio + ITEMS_POR_PAGINA, fraganciasFiltradas.length)} de {fraganciasFiltradas.length} perfumes
+                    {t('Página {p} de {pp} · Mostrando {a}–{b} de {total} perfumes', { p: paginaSegura, pp: totalPaginas, a: indiceInicio + 1, b: Math.min(indiceInicio + ITEMS_POR_PAGINA, fraganciasFiltradas.length), total: fraganciasFiltradas.length })}
                   </span>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
@@ -1969,14 +1948,18 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                       onClick={() => irAPagina(paginaSegura - 1)}
                       style={{ padding: '6px 12px', fontSize: '12px', opacity: paginaSegura <= 1 ? 0.45 : 1 }}
                     >
-                      <ChevronLeft size={14} /> Anterior
+                      <ChevronLeft size={14} /> {t('Anterior')}
                     </button>
 
-                    {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(num => (
+                    {paginasVisibles(paginaSegura, totalPaginas).map((num, i) => num === '…' ? (
+                      <span key={`salto-${i}`} aria-hidden style={{ minWidth: '20px', textAlign: 'center', color: 'var(--m3-text-tertiary)', fontWeight: 800 }}>…</span>
+                    ) : (
                       <button
                         key={num}
                         type="button"
                         onClick={() => irAPagina(num)}
+                        aria-current={num === paginaSegura ? 'page' : undefined}
+                        aria-label={t('Página {n}', { n: num })}
                         style={{
                           minWidth: '34px',
                           height: '34px',
@@ -2000,7 +1983,7 @@ export const CatalogoFiltrosSidebar: React.FC<Props> = ({
                       onClick={() => irAPagina(paginaSegura + 1)}
                       style={{ padding: '6px 12px', fontSize: '12px', opacity: paginaSegura >= totalPaginas ? 0.45 : 1 }}
                     >
-                      Siguiente <ChevronRight size={14} />
+                      {t('Siguiente')} <ChevronRight size={14} />
                     </button>
                   </div>
                 </nav>

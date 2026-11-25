@@ -7,6 +7,9 @@ echo ========================================================
 echo   Iniciando PerfumeScan en http://localhost:5173 ...
 echo ========================================================
 
+REM Cerrar un backend anterior: si sigue ocupando el puerto 8000, el nuevo no arranca y queda el codigo viejo
+powershell -NoProfile -Command "Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue } | Where-Object { $_.ProcessName -eq 'deno' } | Stop-Process -Force"
+
 REM Si el usuario tiene Deno instalado, levantar tambien el Backend en segundo plano
 where deno >nul 2>nul
 if %errorlevel% equ 0 (

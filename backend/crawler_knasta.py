@@ -4,7 +4,10 @@ import json
 import re
 import os
 import sys
+import time
 from concurrent.futures import ThreadPoolExecutor
+
+from scraper_stock import url_imagen
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -66,6 +69,16 @@ MARCAS_OFICIALES = [
     ("Armaf", ["club de nuit intense", "club de nuit woman", "club de nuit sillage", "club de nuit iconic"]),
 ]
 
+# Marcas que el catálogo recorre una a una, de hombre y de mujer (como se escriben en el buscador de las tiendas)
+MARCAS_A_RECORRER = [
+    "dior", "chanel", "giorgio armani", "yves saint laurent", "carolina herrera", "paco rabanne", "jean paul gaultier",
+    "versace", "valentino", "givenchy", "prada", "burberry", "lancome", "hugo boss", "calvin klein", "dolce gabbana",
+    "azzaro", "ralph lauren", "montblanc", "mugler", "tom ford", "gucci", "lacoste", "issey miyake", "bvlgari",
+    "antonio banderas", "davidoff", "lattafa", "armaf", "nautica", "tommy hilfiger", "kenzo", "viktor rolf",
+]
+PAUSA_ENTRE_PEDIDOS = 0.4  # segundos: no saturar a las tiendas
+
+
 # Palabras de relleno, maquillaje o dupes de marketplace que debemos rechazar
 PALABRAS_RECHAZO = [
     "set ", "+ gel", "body lotion", "shower gel", "locion", "loción", "desodorante",
@@ -78,9 +91,19 @@ PALABRAS_RECHAZO = [
 ]
 
 
+# Productos que no son el perfume (o no en su formato normal), como palabras enteras: al recorrer marca por marca
+# aparecen geles, bálsamos, cofres, brumas, minis y hasta relojes
+NO_ES_PERFUME = re.compile(
+    r"\b(gel|ducha|b[aá]lsamo|after\s*shave|afeitar|exfoliante|corporal|cofre|mist|hair|reloj|aceite|labial|lip|glow|"
+    r"tester|minis?|miniatura|travel|discovery|variety|revitalizante|2pc|body|desodorante|deo|crema|jab[oó]n|shampoo|"
+    r"esmalte|buttlerglow|aerosol)\b",
+    re.IGNORECASE,
+)
+
+
 def normalizar_marca(marca_raw, titulo_raw):
     comb = f"{marca_raw or ''} {titulo_raw or ''}".lower()
-    if any(bad in comb for bad in PALABRAS_RECHAZO):
+    if any(bad in comb for bad in PALABRAS_RECHAZO) or NO_ES_PERFUME.search(titulo_raw or ""):
         return None
     for canonica, kws in MARCAS_OFICIALES:
         if any(kw in comb for kw in kws):
@@ -101,6 +124,16 @@ def limpiar_titulo_perfume(titulo_raw, marca):
 
     # Nombres compuestos o icónicos con formato canónico exacto
     tl = (titulo_raw or "").lower()
+    # Nombres que las tiendas escriben mal o con la forma del frasco en vez del perfume
+    tl = tl.replace("´", "'").replace("’", "'")
+    if "goodgirl" in tl:
+        tl = tl.replace("goodgirl", "good girl")
+        t = re.sub(r"goodgirl", "Good Girl", t, flags=re.IGNORECASE)
+    t = re.sub(r"\bmillon\b", "Million", t, flags=re.IGNORECASE)
+    if "j'adior" in tl:
+        return "J'adore", ml
+    if "cantimplora" in tl:
+        return "Hugo Man", ml
     if "bleu de chanel" in tl:
         return "Bleu de Chanel", ml
     if "dior homme intense" in tl:
@@ -172,7 +205,7 @@ def limpiar_titulo_perfume(titulo_raw, marca):
 
     # Quitar frases promocionales de Falabella / retail
     t = re.sub(
-        r"\b(con\s+notas\s+de.*|notas\s+frescas.*|notas\s+florales.*|dulce\s+almizcle.*|formato.*|edici[oó]n\s+limitada.*|nuevo\s+envase.*|vaporizador|vaporisateur|natural\s+spray|spray|eau\s+de\s+parfum|eau\s+de\s+toilette|eau\s+de\s+cologne|edp|edt|edc|perfumes|perfume\s+hombre|perfume\s+mujer|perfume\s+unisex|perfume|fragancia|hombre|mujer|unisex|para|\d{2,3}\s*ml)\b",
+        r"\b(notas\s+.*|con\s+notas\s+de.*|dulce\s+almizcle.*|formato.*|edici[oó]n\s+limitada.*|nuevo\s+envase.*|nueva\s+presentaci[oó]n|nuevo|exclusivo\s+online|sin\s+celof[aá]n|sleeved|rpck|femenino|masculino|vaporizador|vaporisateur|natural\s+spray|spray|eau\s+de\s+parfum|eau\s+de\s+toilette|eau\s+de\s+cologne|edp|edt|edc|perfumes|perfume\s+hombre|perfume\s+mujer|perfume\s+unisex|perfumen|perfume|fragancia|hombre|mujer|unisex|para|\d{1,3}\s*ml)\b",
         " ",
         t,
         flags=re.IGNORECASE,
@@ -196,13 +229,48 @@ def limpiar_titulo_perfume(titulo_raw, marca):
         if not palabras_limpias or palabras_limpias[-1].lower() != wf.lower():
             palabras_limpias.append(wf)
 
+    # Palabras sueltas que quedan al final al cortar el título ("J'adore Intense Con", "Boss Bottle #6 By") y un
+    # tamaño sin "ml" ("Eau Fraiche Extreme 100")
+    while palabras_limpias and (
+        palabras_limpias[-1].lower() in ("con", "by", "de", "y", "para", "the", "and")
+        or (palabras_limpias[-1].isdigit() and 30 <= int(palabras_limpias[-1]) <= 500 and len(palabras_limpias) > 1)
+    ):
+        palabras_limpias.pop()
     res = " ".join(palabras_limpias).strip()
     if len(res) < 3 or res.lower() in ["en", "de", "by", "homme", "femme", "women", "men", "xx", "i will"]:
         return None, ml
     return res, ml
 
 
-def inferir_metadatos_olfativos(marca, nombre, texto_completo):
+HOMBRE = re.compile(r"\b(hombre|homme|men|man|uomo|masculino|for him|caballero|varon)\b")
+MUJER = re.compile(r"\b(mujer|femme|woman|women|donna|femenino|for her|dama|lady)\b")
+PERFUMES_DE_MUJER = ["good girl", "girl", "miss ", "bella", "yara", "amor amor", "la vie est belle", "libre", "paradoxe", "j'adore", "idole", "idôle", "tresor", "trésor", "goddess", "coco mademoiselle", "chance", "bright crystal", "crystal noir", "olympea", "fame", "my way", "burberry her", "lady million", "scandal"]
+PERFUMES_DE_HOMBRE = ["bad boy", "boy", "sauvage", "invictus", "eros", "polo", "explorer", "gentleman", "bottled", "asad", "le male", "le beau", "voyage", "fahrenheit", "wanted", "1 million", "one million", "phantom", "myslf", "code", "hero", "dylan blue", "the one for men"]
+
+
+def genero_y_fuente(marca, titulo, genero_busqueda=None):
+    """(género, de dónde salió): el título, un perfume conocido, la búsqueda que lo encontró o ninguna."""
+    # Sin la marca: "Carolina HERrera" hacía pasar por perfume de mujer a todo Carolina Herrera (Bad Boy incluido)
+    t = re.sub(re.escape(marca or ""), " ", (titulo or "").lower(), flags=re.IGNORECASE)
+    t = re.sub(r"carolina\s+herrera", " ", t)
+    hombre, mujer = bool(HOMBRE.search(t)), bool(MUJER.search(t))
+    if hombre != mujer:
+        return ("Masculino" if hombre else "Femenino"), "titulo"
+    # Un perfume conocido pesa más que la búsqueda: "perfume hombre dior" también trae J'adore
+    if any(re.search(rf"\b{re.escape(k.strip())}\b", t) for k in PERFUMES_DE_MUJER):
+        return "Femenino", "conocido"
+    if any(re.search(rf"\b{re.escape(k.strip())}\b", t) for k in PERFUMES_DE_HOMBRE):
+        return "Masculino", "conocido"
+    if genero_busqueda:
+        return genero_busqueda, "busqueda"
+    return "Unisex", "ninguna"
+
+
+def inferir_genero(marca, titulo, genero_busqueda=None):
+    return genero_y_fuente(marca, titulo, genero_busqueda)[0]
+
+
+def inferir_metadatos_olfativos(marca, nombre, texto_completo, genero_busqueda=None):
     txt = f"{marca} {nombre} {texto_completo}".lower()
 
     if "elixir" in txt or ("parfum" in txt and "eau de parfum" not in txt and "edp" not in txt):
@@ -218,12 +286,7 @@ def inferir_metadatos_olfativos(marca, nombre, texto_completo):
         duracion = 9
         proyeccion = "Alta"
 
-    if any(k in txt for k in ["mujer", "femme", "woman", "women", "her", "girl", "miss ", "dama", "femenin", "bella", "yara", "amor amor", "la vie est belle", "libre", "paradoxe", "j'adore", "idole", "idôle", "tresor", "trésor", "goddess", "coco mademoiselle", "chance", "bright crystal", "crystal noir", "olympea", "fame", "my way"]):
-        genero = "Femenino"
-    elif any(k in txt for k in ["hombre", "homme", "man", "men", "uomo", "boy", "masculin", "sauvage", "invictus", "eros", "polo", "explorer", "gentleman", "bottled", "asad", "le male", "le beau", "voyage", "fahrenheit", "wanted", "1 million", "one million", "phantom", "myslf", "code"]):
-        genero = "Masculino"
-    else:
-        genero = "Unisex"
+    genero = inferir_genero(marca, texto_completo, genero_busqueda)
 
     notas = []
     notas_detalle = []
@@ -291,14 +354,9 @@ def inferir_metadatos_olfativos(marca, nombre, texto_completo):
 
 def crawl_falabella_categoria():
     items = []
-    queries = [
-        "perfume+dior+chanel+armani+ysl",
-        "perfume+carolina+herrera+rabanne+jean+paul+gaultier",
-        "perfume+versace+valentino+givenchy+prada",
-        "perfume+burberry+lancome+hugo+boss+calvin+klein",
-        "perfume+dolce+gabbana+azzaro+ralph+lauren+montblanc",
-    ]
-    for q in queries:
+    busquedas = [(f"perfume {g} {m}".replace(" ", "+"), genero) for m in MARCAS_A_RECORRER for g, genero in (("hombre", "Masculino"), ("mujer", "Femenino"))]
+    for q, genero_busqueda in busquedas:
+        time.sleep(PAUSA_ENTRE_PEDIDOS)
         try:
             url = f"https://www.falabella.com/falabella-cl/search?Ntt={q}"
             resp = requests.get(url, headers=HEADERS, timeout=12)
@@ -311,7 +369,7 @@ def crawl_falabella_categoria():
                 continue
             data = json.loads(nd.string)
             results = data.get("props", {}).get("pageProps", {}).get("results", [])
-            for item in results[:28]:
+            for item in results[:48]:
                 nombre = (item.get("displayName") or "").strip()
                 brand = (item.get("brand") or "").strip()
                 if not nombre or brand.upper() in ["GENERICO", "GENÉRICO", "GENERIC", "SIN MARCA", ""]:
@@ -340,6 +398,7 @@ def crawl_falabella_categoria():
                     "imagen": imagen,
                     "url": url_prod,
                     "descripcion_extra": f"{brand} {nombre}",
+                    "genero_busqueda": genero_busqueda,
                 })
         except Exception:
             pass
@@ -348,16 +407,17 @@ def crawl_falabella_categoria():
 
 def crawl_dbs_categoria():
     items = []
-    queries = ["eau+de+parfum", "eau+de+toilette", "jean+paul+gaultier+rabanne+versace+lancome"]
+    queries = ["eau+de+parfum", "eau+de+toilette"] + [m.replace(" ", "+") for m in MARCAS_A_RECORRER]
     for q in queries:
+        time.sleep(PAUSA_ENTRE_PEDIDOS)
         try:
-            url = f"https://dbs.cl/catalogsearch/result/?q={q}"
+            url = f"https://dbs.cl/catalogsearch/result/?q={q}&product_list_limit=48"
             resp = requests.get(url, headers=HEADERS, timeout=12)
             resp.encoding = "utf-8"
             if resp.status_code != 200:
                 continue
             sopa = BeautifulSoup(resp.text, "html.parser")
-            for prod in sopa.select(".product-item")[:32]:
+            for prod in sopa.select(".product-item")[:48]:
                 txt_prod = prod.get_text(" | ", strip=True)
                 partes = [p.strip() for p in txt_prod.split(" | ") if p.strip()]
                 if len(partes) < 2:
@@ -382,9 +442,7 @@ def crawl_dbs_categoria():
                 href = a_tag["href"] if a_tag and a_tag.get("href") else url
 
                 img_el = prod.select_one("img.product-image-photo") or prod.select_one("img")
-                img_src = None
-                if img_el:
-                    img_src = img_el.get("src") or img_el.get("data-src")
+                img_src = url_imagen(img_el)
                 if not img_src:
                     continue
 
@@ -404,8 +462,16 @@ def crawl_dbs_categoria():
 
 def crawl_ahumada_categoria():
     items = []
+    for q, genero_busqueda in (("perfume+eau+de", None), ("perfume+hombre", "Masculino"), ("perfume+mujer", "Femenino")):
+        time.sleep(PAUSA_ENTRE_PEDIDOS)
+        items += crawl_ahumada_busqueda(q, genero_busqueda)
+    return items
+
+
+def crawl_ahumada_busqueda(q, genero_busqueda):
+    items = []
     try:
-        url = "https://www.farmaciasahumada.cl/search?q=perfume+eau+de"
+        url = f"https://www.farmaciasahumada.cl/search?q={q}"
         resp = requests.get(url, headers=HEADERS, timeout=12)
         resp.encoding = "utf-8"
         if resp.status_code != 200:
@@ -427,7 +493,7 @@ def crawl_ahumada_categoria():
             href = el_n.get("href", "")
             link = f"https://www.farmaciasahumada.cl{href}" if href.startswith("/") else href
             img_el = prod.select_one(".tile-image, img")
-            img_src = img_el.get("src") or img_el.get("data-src") if img_el else None
+            img_src = url_imagen(img_el)
             if not img_src:
                 continue
             items.append({
@@ -438,9 +504,47 @@ def crawl_ahumada_categoria():
                 "imagen": img_src,
                 "url": link,
                 "descripcion_extra": f"{marca} {nombre}",
+                "genero_busqueda": genero_busqueda,
             })
     except Exception:
         pass
+    return items
+
+
+def crawl_alisha_categoria():
+    items = []
+    for m in MARCAS_A_RECORRER:
+        for g, genero_busqueda in (("men", "Masculino"), ("women", "Femenino")):
+            time.sleep(PAUSA_ENTRE_PEDIDOS)
+            try:
+                resp = requests.get(
+                    "https://alishaperfumes.cl/search/suggest.json",
+                    params={"q": f"{m} {g}", "resources[type]": "product", "resources[limit]": 10},
+                    headers=HEADERS,
+                    timeout=12,
+                )
+                if resp.status_code != 200:
+                    continue
+                for p in resp.json().get("resources", {}).get("results", {}).get("products", []):
+                    titulo = re.sub(r"[^\x00-\x7F]+", " ", p.get("title") or "").strip()
+                    try:
+                        precio = int(float(p.get("price")))
+                    except (TypeError, ValueError):
+                        continue
+                    if not titulo or precio < 15000 or not p.get("image") or p.get("available") is False:
+                        continue
+                    items.append({
+                        "tienda": "Alisha Perfumes",
+                        "nombre_tienda": titulo,
+                        "marca_tienda": p.get("vendor") or "",
+                        "precio": precio,
+                        "imagen": p.get("image"),
+                        "url": "https://alishaperfumes.cl" + (p.get("url") or "").split("?")[0],
+                        "descripcion_extra": f"{p.get('vendor') or ''} {titulo}",
+                        "genero_busqueda": genero_busqueda,
+                    })
+            except Exception:
+                pass
     return items
 
 
@@ -454,12 +558,50 @@ PALETAS_FRASCO = [
 ]
 
 
+FINAL_DE_GENERO = re.compile(r"\s+(for\s+men|for\s+women|men|man|woman|women)$", re.IGNORECASE)
+
+
+# Palabras que solas no son un nombre: "Hugo Man" o "Miss Dior" no deben perder la parte de la marca
+SOLAS_NO_SON_NOMBRE = {"man", "men", "woman", "women", "femme", "homme", "miss", "xx", "xy", "boss", "hugo", "red", "the"}
+
+
+def sin_marca_suelta(nombre, marca):
+    """Quita al principio o al final un pedazo suelto de una marca de varias palabras ("Herrera Confidential Amethyst
+    Carolina" -> "Confidential Amethyst", "1 Million Paco" -> "1 Million") o la marca repetida ("Versace Eros" -> "Eros")."""
+    nombre_completo = next((kws[0] for canonica, kws in MARCAS_OFICIALES if canonica == marca), marca)
+    de_marca = set(f"{marca} {nombre_completo}".lower().split())
+    palabras = nombre.split()
+    cambio = True
+    while cambio and len(palabras) > 1:
+        cambio = False
+        for i in (0, -1):
+            if len(palabras) > 1 and palabras[i].lower() in de_marca:
+                resto = palabras[1:] if i == 0 else palabras[:-1]
+                if len(resto) == 1 and (resto[0].lower() in SOLAS_NO_SON_NOMBRE or len(resto[0]) < 3):
+                    continue
+                palabras, cambio = resto, True
+    return " ".join(palabras)
+
+
+def sin_genero_final(nombre):
+    # "Sauvage Men" y "Sauvage" son el mismo perfume; "212 Men", "CH Men" o "Hugo Man" no (el resto no alcanza a ser nombre)
+    resto = FINAL_DE_GENERO.sub("", nombre).strip()
+    if resto == nombre or resto.isdigit() or (len(resto.split()) < 2 and len(resto) < 6):
+        return nombre
+    return resto
+
+
+HOY = time.strftime("%Y-%m-%d")
+
+
 def construir_catalogo_knasta():
-    with ThreadPoolExecutor(max_workers=3) as ex:
+    # Una tienda por hilo: las búsquedas a una misma tienda van de a una, con pausa
+    with ThreadPoolExecutor(max_workers=4) as ex:
         f_fala = ex.submit(crawl_falabella_categoria)
         f_dbs = ex.submit(crawl_dbs_categoria)
         f_ahu = ex.submit(crawl_ahumada_categoria)
-        brutos = f_fala.result() + f_dbs.result() + f_ahu.result()
+        f_ali = ex.submit(crawl_alisha_categoria)
+        brutos = f_fala.result() + f_dbs.result() + f_ahu.result() + f_ali.result()
 
     agrupados = {}
     for b in brutos:
@@ -469,15 +611,29 @@ def construir_catalogo_knasta():
         nombre_limpio, ml = limpiar_titulo_perfume(b["nombre_tienda"], marca)
         if not nombre_limpio or len(nombre_limpio) < 3:
             continue
+        nombre_limpio = sin_genero_final(sin_marca_suelta(nombre_limpio, marca))
         if ml is None:
             ml = ml_desde_texto(b["url"])
+        if ml is not None and ml < 10:
+            continue  # minis y muestras
         txt_ml = f" · {ml}ml" if ml else ""
 
-        clave = re.sub(r"[^a-z0-9]+", "-", f"{marca.lower()}-{nombre_limpio.lower()}").strip("-")
-        if not clave:
+        meta = inferir_metadatos_olfativos(marca, nombre_limpio, b["descripcion_extra"], b.get("genero_busqueda"))
+        _, fuente_genero = genero_y_fuente(marca, b["descripcion_extra"], b.get("genero_busqueda"))
+        base = re.sub(r"[^a-z0-9]+", "-", f"{marca.lower()}-{nombre_limpio.lower()}").strip("-")
+        if not base:
             continue
+        clave = f"{base}-{meta['genero'][0].lower()}"
+        if fuente_genero in ("busqueda", "ninguna"):
+            # Sin el género en el título ni un perfume conocido, va con el que ya existe con ese nombre; si apareció en
+            # la búsqueda de hombre y en la de mujer, es unisex (antes quedaba repetido, uno de cada género)
+            existente = next((k for k in (f"{base}-m", f"{base}-f", f"{base}-u") if k in agrupados), None)
+            if existente:
+                clave = existente
+                previo = agrupados[existente]
+                if previo["genero"] != meta["genero"] and previo.get("_genero_por_busqueda"):
+                    previo["genero"] = "Unisex"
 
-        meta = inferir_metadatos_olfativos(marca, nombre_limpio, b["descripcion_extra"])
         paleta = PALETAS_FRASCO[abs(hash(clave)) % len(PALETAS_FRASCO)]
 
         if clave not in agrupados:
@@ -502,7 +658,10 @@ def construir_catalogo_knasta():
                 "tiendaMejorPrecio": b["tienda"],
                 "urlMejorPrecio": b["url"],
                 "descubiertoEnVivo": True,
+                # El precio se acaba de leer en la tienda: con la fecha, la app lo muestra como del día
+                "fechaPrecio": HOY,
                 "colorFrasco": paleta,
+                "_genero_por_busqueda": fuente_genero in ("busqueda", "ninguna"),
             }
         else:
             actual = agrupados[clave]
@@ -517,7 +676,23 @@ def construir_catalogo_knasta():
             if not actual["imagen"] and b["imagen"]:
                 actual["imagen"] = b["imagen"]
 
+    # "Eros Men" va con "Eros" si ese existe en la misma marca y género ("Hugo Man" se queda: no hay un "Hugo" de hombre)
+    for clave_g in list(agrupados):
+        x = agrupados.get(clave_g)
+        if not x:
+            continue
+        base = FINAL_DE_GENERO.sub("", x["nombre"]).strip()
+        if base == x["nombre"]:
+            continue
+        destino = next((k for k, y in agrupados.items() if k != clave_g and y["marca"] == x["marca"] and y["genero"] == x["genero"] and y["nombre"] == base), None)
+        if destino:
+            if x["precioReferencia"] < agrupados[destino]["precioReferencia"]:
+                for campo in ("precioReferencia", "tiendaMejorPrecio", "urlMejorPrecio", "ml", "subtitulo", "imagen"):
+                    agrupados[destino][campo] = x[campo]
+            del agrupados[clave_g]
     lista_final = list(agrupados.values())
+    for x in lista_final:
+        x.pop("_genero_por_busqueda", None)
 
     # Solo se escribe el catálogo indexado; catalogo_descubiertos.json guarda los perfumes aprendidos de las
     # búsquedas y sobrescribirlo los borraba. El backend combina ambos al refrescar precios.

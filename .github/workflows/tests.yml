@@ -1,0 +1,63 @@
+# Corre los tests en cada push y en cada pull request, en los servidores de GitHub.
+# Solo tests que no necesitan internet ni las claves del .env: los scrapers y la IA se prueban con datos de ejemplo.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  frontend:
+    name: Frontend (tipos, compilación y tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Tipos y compilación
+        run: npm run build
+      - name: Tests
+        run: for t in tests/*.test.ts; do echo "== $t"; node "$t"; done
+
+  backend:
+    name: Backend (Deno)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Tipos del servidor
+        run: deno check server.ts
+      - name: Tests
+        run: |
+          deno test utilidades_test.ts
+          deno test -A cuentas_test.ts
+
+  scrapers:
+    name: Scrapers (Python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests beautifulsoup4
+      - name: Tests
+        run: |
+          python test_scraper_stock.py
+          python test_scraper_sucursales.py
+          python test_crawler_knasta.py

@@ -1,6 +1,8 @@
 /* ==========================================================================
-   PERFUMESCAN v5.0 — LUXURY EDITORIAL & MATERIAL DESIGN 3 SYSTEM
-   Inspirado en Parfumo, Sephora Luxury, Byredo & Linear UI
+   PERFUMESCAN — ALMACÉN DE CAMPO
+   De día: papel, etiquetas de kraft y tinta. De noche: la pizarra del almacén.
+   Los colores del semáforo de alergias (verde, ámbar, rojo) no son parte del
+   tema: se dejan iguales para que no se confundan con la decoración.
    ========================================================================== */
 
 :root {
@@ -13,93 +15,112 @@
     color-scheme: light;
   }
 
-  /* Tipografías Editoriales */
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  /* Letra de imprenta para los datos; la manuscrita solo para el letrero y las notas */
+  --font-sans: 'Bitter', Georgia, 'Times New Roman', serif;
+  --font-serif: 'Bitter', Georgia, 'Times New Roman', serif;
+  --font-mono: 'Bitter', Georgia, 'Times New Roman', serif;
+  --font-mano: 'Caveat', 'Segoe Script', cursive;
 
-  /* Paleta Tonal Modo Claro (Editorial Ivory & Royal Indigo/Gold) */
-  --m3-primary: #3730a3;            /* Deep Royal Indigo */
-  --m3-primary-hover: #312e81;
-  --m3-primary-container: #e0e7ff;
-  --m3-on-primary-container: #1e1b4b;
+  /* Tinta de timbre para las acciones principales */
+  --m3-primary: #9c2b1b;
+  --m3-primary-hover: #7f2114;
+  --m3-on-primary: #fbf6ea;
+  --m3-primary-container: #f1d9c7;
+  --m3-on-primary-container: #5a160c;
 
-  --m3-gold: #b45309;               /* Champagne Amber */
-  --m3-gold-soft: #fef3c7;
-  --m3-gold-border: #fde68a;
+  --m3-gold: #8a5a1f;
+  --m3-gold-soft: #f3e3c0;
+  --m3-gold-border: #d9b98a;
 
-  --m3-secondary: #0f766e;
-  --m3-secondary-container: #ccfbf1;
-  --m3-on-secondary-container: #134e4a;
+  /* Verde de botella (el segundo perfume del comparador) */
+  --m3-secondary: #3f6b4a;
+  --m3-secondary-container: #dce8d6;
+  --m3-on-secondary-container: #1f3a27;
 
-  --m3-tertiary: #b45309;
-  --m3-tertiary-container: #fef3c7;
-  --m3-on-tertiary-container: #78350f;
+  --m3-tertiary: #8a5a1f;
+  --m3-tertiary-container: #f3e3c0;
+  --m3-on-tertiary-container: #4a3317;
 
-  --m3-surface: #f4f4f6;
-  --m3-surface-container-lowest: #ffffff;
-  --m3-surface-container-low: #f8fafc;
-  --m3-surface-container: #f1f5f9;
-  --m3-surface-container-high: #e2e8f0;
+  /* Papel: la página, las hojas y el kraft de las etiquetas */
+  --m3-surface: #eadfc6;
+  --m3-surface-container-lowest: #fbf6ea;
+  --m3-surface-container-low: #f5edd9;
+  --m3-surface-container: #efe4cb;
+  --m3-surface-container-high: #e2cfa6;
+  --almacen-etiqueta: #e8d3ac;
+  --almacen-marco: 1px solid #b8a27a;
 
-  --m3-text-primary: #090d16;
-  --m3-text-secondary: #475569;
-  --m3-text-tertiary: #64748b;
-  --m3-outline: #cbd5e1;
-  --m3-outline-variant: rgba(148, 163, 184, 0.25);
+  --m3-text-primary: #2e2010;
+  --m3-text-secondary: #54401f;
+  --m3-text-tertiary: #6b5637;
+  --m3-outline: #b8a27a;
+  --m3-outline-variant: rgba(84, 64, 31, 0.24);
 
-  --m3-success: #15803d;
-  --m3-success-container: #dcfce7;
-  --m3-error: #b91c1c;
-  --m3-error-container: #fee2e2;
+  --m3-success: #2f6b2f;
+  --m3-success-container: #ddebd0;
+  --m3-error: #9c2b1b;
+  --m3-error-container: #f6dcd3;
 
-  /* Radios y Sombras Multicapa */
-  --m3-shape-full: 9999px;
-  --m3-shape-xl: 26px;
-  --m3-shape-lg: 18px;
-  --m3-shape-md: 13px;
-  --m3-shape-sm: 9px;
-  --m3-shape-xs: 6px;
+  /* Esquinas de papel cortado: casi rectas */
+  --m3-shape-full: 6px;
+  --m3-shape-xl: 8px;
+  --m3-shape-lg: 6px;
+  --m3-shape-md: 5px;
+  --m3-shape-sm: 4px;
+  --m3-shape-xs: 3px;
 
+  /* El papel no flota: una orilla marcada y poca sombra */
   --m3-elev-0: none;
-  --m3-elev-1: 0 2px 8px -2px rgba(15, 23, 42, 0.06), 0 1px 3px -1px rgba(15, 23, 42, 0.04);
-  --m3-elev-2: 0 12px 28px -6px rgba(15, 23, 42, 0.09), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
-  --m3-elev-3: 0 22px 45px -10px rgba(15, 23, 42, 0.14), 0 8px 18px -4px rgba(15, 23, 42, 0.06);
+  --m3-elev-1: 0 1px 0 rgba(46, 32, 16, 0.18);
+  --m3-elev-2: 0 2px 0 rgba(46, 32, 16, 0.16), 0 10px 18px -12px rgba(46, 32, 16, 0.35);
+  --m3-elev-3: 0 3px 0 rgba(46, 32, 16, 0.18), 0 22px 34px -16px rgba(46, 32, 16, 0.45);
 }
 
 /* ==========================================================================
-   MODO OSCURO DE LUJO (OBSIDIANA & CHAMPAGNE GOLD)
+   DE NOCHE: LA PIZARRA DEL ALMACÉN (tiza sobre verde oscuro, marco de madera)
    ========================================================================== */
 [data-theme="dark"],
 :root:has(> head > meta[name="color-scheme"][content="dark"]) {
-  --m3-primary: #818cf8;
-  --m3-primary-hover: #6366f1;
-  --m3-primary-container: rgba(99, 102, 241, 0.18);
-  --m3-on-primary-container: #e0e7ff;
+  --m3-primary: #f6e27a;
+  --m3-primary-hover: #fff0a3;
+  --m3-on-primary: #2b2a14;
+  --m3-primary-container: rgba(246, 226, 122, 0.16);
+  --m3-on-primary-container: #f6e27a;
 
-  --m3-gold: #fbbf24;
-  --m3-gold-soft: rgba(251, 191, 36, 0.14);
-  --m3-gold-border: rgba(251, 191, 36, 0.35);
+  --m3-gold: #e8b86b;
+  --m3-gold-soft: rgba(232, 184, 107, 0.14);
+  --m3-gold-border: rgba(232, 184, 107, 0.4);
 
-  --m3-secondary: #2dd4bf;
-  --m3-secondary-container: rgba(45, 212, 191, 0.15);
-  --m3-on-secondary-container: #ccfbf1;
+  --m3-secondary: #9fd4b0;
+  --m3-secondary-container: rgba(159, 212, 176, 0.15);
+  --m3-on-secondary-container: #d3ecdb;
 
-  --m3-surface: #07090e;
-  --m3-surface-container-lowest: #0f1420;
-  --m3-surface-container-low: #151c2c;
-  --m3-surface-container: #1b2438;
-  --m3-surface-container-high: #26324d;
+  --m3-tertiary: #e8b86b;
+  --m3-tertiary-container: rgba(232, 184, 107, 0.14);
+  --m3-on-tertiary-container: #f3dcb4;
 
-  --m3-text-primary: #f8fafc;
-  --m3-text-secondary: #cbd5e1;
-  --m3-text-tertiary: #94a3b8;
-  --m3-outline: #334155;
-  --m3-outline-variant: rgba(148, 163, 184, 0.16);
+  --m3-surface: #1c221e;
+  --m3-surface-container-lowest: #2b332d;
+  --m3-surface-container-low: #313a33;
+  --m3-surface-container: #38423a;
+  --m3-surface-container-high: #465148;
+  --almacen-etiqueta: #38423a;
+  --almacen-marco: 6px solid #8a5a33;
 
-  --m3-elev-1: 0 4px 14px rgba(0, 0, 0, 0.4);
-  --m3-elev-2: 0 12px 32px rgba(0, 0, 0, 0.55);
-  --m3-elev-3: 0 24px 54px rgba(0, 0, 0, 0.7);
+  --m3-text-primary: #f2efe6;
+  --m3-text-secondary: #c9cfc6;
+  --m3-text-tertiary: #a4ada3;
+  --m3-outline: #5b665d;
+  --m3-outline-variant: rgba(201, 207, 198, 0.2);
+
+  --m3-success: #8fcf8f;
+  --m3-success-container: rgba(143, 207, 143, 0.15);
+  --m3-error: #f0907f;
+  --m3-error-container: rgba(240, 144, 127, 0.15);
+
+  --m3-elev-1: 0 1px 0 rgba(0, 0, 0, 0.35);
+  --m3-elev-2: 0 2px 0 rgba(0, 0, 0, 0.35), 0 12px 22px -12px rgba(0, 0, 0, 0.6);
+  --m3-elev-3: 0 3px 0 rgba(0, 0, 0, 0.4), 0 24px 40px -16px rgba(0, 0, 0, 0.75);
 }
 
 /* Base Global Reset */
@@ -110,7 +131,7 @@
 body {
   background-color: var(--m3-surface);
   background-image:
-    radial-gradient(at 15% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+    radial-gradient(at 15% 0%, color-mix(in srgb, var(--m3-primary) 8%, transparent) 0px, transparent 50%),
     radial-gradient(at 85% 5%, rgba(217, 119, 6, 0.07) 0px, transparent 45%);
   color: var(--m3-text-primary);
   font-family: var(--font-sans);
@@ -149,7 +170,7 @@ body {
 .m3-top-bar {
   padding: 32px 32px 22px 32px;
   background:
-    radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.13), transparent 65%),
+    radial-gradient(circle at 50% -20%, color-mix(in srgb, var(--m3-primary) 13%, transparent), transparent 65%),
     radial-gradient(circle at 85% 10%, rgba(217, 119, 6, 0.09), transparent 50%),
     linear-gradient(180deg, var(--m3-surface-container-lowest) 0%, var(--m3-surface-container-low) 100%);
   border-bottom: 1px solid var(--m3-outline-variant);
@@ -177,12 +198,12 @@ body {
   width: 42px;
   height: 42px;
   border-radius: 13px;
-  background: linear-gradient(135deg, #3730a3 0%, #6366f1 55%, #d97706 100%);
+  background: var(--m3-primary);
   color: #ffffff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 16px rgba(67, 56, 202, 0.3);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--m3-primary) 30%, transparent);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -200,7 +221,7 @@ body {
   color: var(--m3-primary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  border: 1px solid color-mix(in srgb, var(--m3-primary) 25%, transparent);
 }
 
 .m3-brand-subtitle {
@@ -340,7 +361,7 @@ body {
 
 .m3-search-bar:focus-within {
   border-color: var(--m3-primary);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14), var(--m3-elev-2);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--m3-primary) 14%, transparent), var(--m3-elev-2);
   background: var(--m3-surface-container-lowest);
   translate: 0 -1px;
 }
@@ -418,7 +439,7 @@ body {
 }
 
 .m3-search-submit {
-  background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
+  background: var(--m3-primary);
   color: #ffffff;
   border: none;
   border-radius: var(--m3-shape-full);
@@ -435,13 +456,13 @@ body {
   display: flex;
   align-items: center;
   gap: 7px;
-  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--m3-primary) 25%, transparent);
 }
 
 .m3-search-submit:hover:not(:disabled) {
   filter: brightness(1.08);
   translate: 0 -1px;
-  box-shadow: 0 6px 18px rgba(67, 56, 202, 0.35);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--m3-primary) 35%, transparent);
 }
 
 .m3-search-submit:disabled {
@@ -633,7 +654,7 @@ body {
   background: var(--m3-primary);
   color: #ffffff;
   font-weight: 700;
-  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--m3-primary) 25%, transparent);
 }
 
 /* ── Tarjeta de Producto y Oferta (Editorial Card) ── */
@@ -652,7 +673,7 @@ body {
 .m3-product-card:hover {
   translate: 0 -4px;
   box-shadow: var(--m3-elev-3);
-  border-color: rgba(99, 102, 241, 0.4);
+  border-color: color-mix(in srgb, var(--m3-primary) 40%, transparent);
 }
 
 .m3-product-card.selected-ref {
@@ -812,7 +833,7 @@ body {
 
 .m3-compare-slot.slot-a:focus-within {
   border-color: var(--m3-primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m3-primary) 14%, transparent);
 }
 
 .m3-compare-slot.slot-b:focus-within {
@@ -1023,13 +1044,13 @@ body {
 }
 
 .m3-btn-primary {
-  background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%);
+  background: var(--m3-primary);
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(67, 56, 202, 0.22);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--m3-primary) 22%, transparent);
 }
 
 .m3-btn-primary:hover:not(:disabled) {
-  box-shadow: 0 6px 16px rgba(67, 56, 202, 0.32);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--m3-primary) 32%, transparent);
 }
 
 .m3-btn-tonal {
@@ -1100,7 +1121,8 @@ body {
   border-radius: var(--m3-shape-xl);
   max-width: 660px;
   width: 100%;
-  max-height: 90vh;
+  /* El escalado de pantalla grande también agranda los vh: se compensa para que la ventana quepa */
+  max-height: calc(90vh / var(--zoom-pantalla, 1));
   overflow-y: auto;
   box-shadow: var(--m3-elev-3);
   border: 1px solid var(--m3-outline-variant);
@@ -1340,7 +1362,7 @@ body {
 .m3-showcase-card:hover {
   translate: 0 -5px;
   box-shadow: var(--m3-elev-3);
-  border-color: rgba(79, 70, 229, 0.45);
+  border-color: color-mix(in srgb, var(--m3-primary) 45%, transparent);
 }
 
 .m3-showcase-img-box {
@@ -1500,7 +1522,7 @@ body {
 .knasta-card:hover {
   translate: 0 -3px;
   box-shadow: var(--m3-elev-3);
-  border-color: #84cc16;
+  border-color: var(--m3-text-primary);
 }
 
 .knasta-img-stage {
@@ -1928,5 +1950,379 @@ body {
   header,
   nav {
     display: none !important;
+  }
+}
+
+/* ── Pantallas chicas: columnas que no se salen y contenido compacto ── */
+.m3-compare-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.m3-compare-column,
+.m3-compare-slot {
+  min-width: 0;
+}
+
+.m3-matrix-row {
+  grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr);
+}
+
+@media (max-width: 640px) {
+  .m3-compare-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .m3-compare-column {
+    padding: 14px;
+  }
+  .m3-compare-matrix {
+    padding: 14px 12px;
+  }
+  .m3-matrix-row {
+    grid-template-columns: minmax(0, 1fr) 84px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 12px;
+  }
+  .m3-matrix-bar {
+    width: 32px !important;
+  }
+
+  .m3-top-utility-bar {
+    gap: 6px;
+  }
+  .m3-utility-pill {
+    padding: 6px 10px;
+  }
+
+  .m3-nav-segmented {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .m3-nav-btn svg {
+    flex-shrink: 0;
+  }
+  .m3-nav-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    padding: 9px 6px;
+    font-size: 0.8rem;
+    gap: 5px;
+  }
+
+  /* Pestañas de la ficha en una sola fila deslizable */
+  .knasta-folder-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .knasta-folder-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .knasta-folder-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 9px 12px;
+    font-size: 12.5px;
+  }
+
+  /* Catálogo en 2 columnas */
+  .m3-showcase-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .knasta-img-stage {
+    height: 150px;
+    padding: 10px;
+  }
+  .knasta-card-body {
+    padding: 10px;
+  }
+  .knasta-main-price {
+    font-size: 1.05rem;
+  }
+  .knasta-cta-green {
+    font-size: 11.5px;
+    padding: 8px 6px;
+  }
+  .knasta-cta-green svg {
+    display: none;
+  }
+  .knasta-secondary-icon-btn {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+  .knasta-related-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .m3-toast {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+}
+
+/* ==========================================================================
+   ALMACÉN DE CAMPO — formas propias del tema
+   Los colores, letras y esquinas salen de las variables del inicio del archivo.
+   Aquí va lo que las variables no alcanzan: el letrero, las etiquetas colgadas
+   y los timbres. Va al final para ganarle a las reglas anteriores.
+   ========================================================================== */
+
+body {
+  background-image: none;
+}
+
+.letra-mano {
+  font-family: var(--font-mano);
+}
+
+/* La hoja completa: de día papel con orilla, de noche pizarra con marco de madera */
+.m3-app-shell {
+  border: var(--almacen-marco);
+}
+
+/* ── El letrero del almacén ── */
+.m3-top-bar {
+  background: var(--m3-surface-container-high);
+  border-bottom: 3px double var(--m3-text-primary);
+}
+
+.m3-brand-title {
+  font-family: var(--font-mano);
+  font-size: 3.1rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+/* Timbre redondo del almacén en vez del logo con degradado */
+.m3-brand-logo-mark {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--m3-text-primary);
+  border: 2px solid var(--m3-text-primary);
+  box-shadow: none;
+  flex-shrink: 0;
+}
+
+/* Timbre de tinta, algo torcido como puesto a mano */
+.m3-brand-badge {
+  font-size: 0.68rem;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--m3-primary);
+  border: 1.5px solid var(--m3-primary);
+  rotate: -3deg;
+}
+
+.m3-brand-subtitle {
+  font-family: var(--font-mano);
+  font-size: 1.45rem;
+  line-height: 1.2;
+  color: var(--m3-text-primary);
+}
+
+.m3-utility-pill {
+  background: var(--m3-surface-container-lowest);
+  border-color: var(--m3-outline);
+}
+
+.m3-badge-counter {
+  color: var(--m3-on-primary);
+  border-radius: 3px;
+}
+
+/* Las pestañas principales: cartelitos; el activo queda en tinta */
+.m3-nav-segmented {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  gap: 8px;
+  padding: 0;
+}
+
+.m3-nav-btn {
+  border: 1px solid var(--m3-outline);
+  background: var(--m3-surface-container-lowest);
+}
+
+.m3-nav-btn.active {
+  background: var(--m3-text-primary);
+  color: var(--m3-surface-container-lowest);
+  border-color: var(--m3-text-primary);
+  box-shadow: none;
+}
+
+/* ── Buscador: una etiqueta para escribir ── */
+.m3-search-bar {
+  border: 1.5px solid var(--m3-text-primary);
+  background: var(--m3-surface-container-lowest);
+  padding-left: 16px;
+}
+
+.m3-search-bar:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--m3-primary) 30%, transparent);
+  background: var(--m3-surface-container-lowest);
+}
+
+.m3-search-submit,
+.m3-btn-primary {
+  background: var(--m3-primary);
+  color: var(--m3-on-primary);
+  box-shadow: 0 2px 0 var(--m3-primary-hover);
+}
+
+.m3-search-submit:hover:not(:disabled),
+.m3-btn-primary:hover:not(:disabled) {
+  background: var(--m3-primary-hover);
+  box-shadow: 0 2px 0 var(--m3-primary-hover);
+}
+
+.m3-camera-trigger.active {
+  color: var(--m3-on-primary);
+}
+
+.m3-subtab-item.active {
+  color: var(--m3-on-primary);
+}
+
+/* ── Etiquetas colgadas: cada perfume del catálogo ── */
+.knasta-card,
+.m3-showcase-card {
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid var(--m3-outline);
+  background: var(--almacen-etiqueta);
+}
+
+.knasta-card:hover,
+.m3-showcase-card:hover {
+  border-color: var(--m3-text-primary);
+  box-shadow: var(--m3-elev-2);
+  rotate: -0.6deg;
+}
+
+/* El ojal por donde pasa el cordel */
+.knasta-card::before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  translate: -50% 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--m3-surface);
+  border: 1px solid var(--m3-outline);
+  z-index: 4;
+}
+
+.knasta-img-stage {
+  border-bottom: 1px dashed var(--m3-outline);
+}
+
+.knasta-store-pill,
+.knasta-best-price-pill {
+  border-radius: 3px;
+}
+
+.knasta-store-pill {
+  color: #2e2010;
+  border-color: #b8a27a;
+  box-shadow: none;
+}
+
+.knasta-product-title {
+  font-size: 15px;
+}
+
+.knasta-main-price {
+  font-size: 1.4rem;
+  letter-spacing: 0;
+}
+
+/* El botón de cada etiqueta: tinta sobre papel, sin el verde lima */
+.knasta-cta-green {
+  background: var(--m3-text-primary);
+  color: var(--m3-surface-container-lowest);
+  border-radius: 4px;
+}
+
+.knasta-secondary-icon-btn {
+  border-radius: 4px;
+  border-color: var(--m3-outline);
+}
+
+.knasta-floating-circle-btn {
+  background: var(--m3-text-primary);
+  color: var(--m3-surface-container-lowest);
+}
+
+/* Pestañas de la ficha: separadores de archivador */
+.knasta-folder-tab.active {
+  border-top: 3px solid var(--m3-primary);
+}
+
+.m3-chip,
+.m3-suggestion-chip,
+.m3-offer-pill {
+  border-color: var(--m3-outline);
+}
+
+.m3-toast {
+  background: var(--m3-text-primary);
+  color: var(--m3-surface-container-lowest);
+  border-color: var(--m3-text-primary);
+}
+
+@media (max-width: 640px) {
+  .m3-brand-title {
+    font-size: 2.3rem;
+  }
+  .m3-brand-subtitle {
+    font-size: 1.2rem;
+  }
+}
+
+/* Quien pidió menos movimiento no ve las etiquetas girar */
+@media (prefers-reduced-motion: reduce) {
+  .knasta-card:hover,
+  .m3-showcase-card:hover {
+    rotate: none;
+  }
+}
+
+/* Los botones y campos no heredan la letra por defecto: sin esto salen en la letra del sistema */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ── Pantallas grandes ──
+   Casi todos los tamaños están en px, así que en un monitor de 1920 px la app quedaba angosta y con letra chica.
+   El zoom escala todo junto (letra, botones y tarjetas) y el ancho máximo crece para usar los costados. */
+@media (min-width: 1600px) {
+  :root {
+    --zoom-pantalla: 1.1;
+  }
+  html {
+    zoom: var(--zoom-pantalla);
+  }
+  #root {
+    max-width: 1480px;
+  }
+}
+
+@media (min-width: 2200px) {
+  :root {
+    --zoom-pantalla: 1.3;
   }
 }

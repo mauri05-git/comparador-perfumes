@@ -8,7 +8,17 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronUp,
+  Droplets,
 } from 'lucide-react';
+import type { FraganciaCatalogoItem } from './CatalogoFiltrosSidebar';
+import { t } from '../i18n.ts';
+
+// Palabras del nombre sin las de la marca: "Paco Rabanne 1 Million" y "1 Million" de Rabanne son el mismo perfume
+const palabrasDe = (t: string) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').split(/[^a-z0-9]+/).filter(Boolean);
+const nucleo = (nombre: string, marca: string) => {
+  const deMarca = new Set(palabrasDe(marca));
+  return palabrasDe(nombre).filter((p) => !deMarca.has(p)).join(' ');
+};
 
 interface RecomendacionQuiz {
   nombre: string;
@@ -22,11 +32,13 @@ interface RecomendacionQuiz {
   alergenosIds: string[];
   motivo: string;
   imagen?: string;
+  genero: 'Masculino' | 'Femenino' | 'Unisex';
 }
 
 const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   {
     nombre: 'Acqua Di Gio',
+    genero: 'Masculino',
     marca: 'Giorgio Armani',
     ocasion: 'verano',
     estilo: 'fresco',
@@ -40,6 +52,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Nautica Voyage',
+    genero: 'Masculino',
     marca: 'Nautica',
     ocasion: 'verano',
     estilo: 'fresco',
@@ -53,6 +66,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Bleu de Chanel',
+    genero: 'Masculino',
     marca: 'Chanel',
     ocasion: 'oficina',
     estilo: 'amaderado',
@@ -66,6 +80,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Sauvage Dior',
+    genero: 'Masculino',
     marca: 'Dior',
     ocasion: 'oficina',
     estilo: 'amaderado',
@@ -79,6 +94,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Good Girl',
+    genero: 'Femenino',
     marca: 'Carolina Herrera',
     ocasion: 'cita',
     estilo: 'dulce',
@@ -92,6 +108,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Versace Eros',
+    genero: 'Masculino',
     marca: 'Versace',
     ocasion: 'fiesta',
     estilo: 'dulce',
@@ -105,6 +122,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Montblanc Explorer',
+    genero: 'Masculino',
     marca: 'Montblanc',
     ocasion: 'oficina',
     estilo: 'amaderado',
@@ -117,6 +135,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Calvin Klein CK One',
+    genero: 'Unisex',
     marca: 'Calvin Klein',
     ocasion: 'verano',
     estilo: 'fresco',
@@ -129,6 +148,7 @@ const BASE_RECOMENDACIONES: RecomendacionQuiz[] = [
   },
   {
     nombre: 'Paco Rabanne 1 Million',
+    genero: 'Masculino',
     marca: 'Paco Rabanne',
     ocasion: 'fiesta',
     estilo: 'dulce',
@@ -146,7 +166,19 @@ export const QuizDescubridor: React.FC<{
   notasPersonalizadas: string[];
   onBuscar: (nombre: string) => void;
   onGuardarEnLista: (nombre: string, marca: string, precio: number, imagen?: string) => void;
-}> = ({ alergiasUsuario, notasPersonalizadas, onBuscar, onGuardarEnLista }) => {
+  // Catálogo cargado: de ahí sale la foto real del producto
+  catalogo?: FraganciaCatalogoItem[];
+}> = ({ alergiasUsuario, notasPersonalizadas, onBuscar, onGuardarEnLista, catalogo = [] }) => {
+  const [fotosRotas, setFotosRotas] = useState<Set<string>>(new Set());
+  // El mismo perfume en el catálogo, del mismo género ("Acqua di Giò" de hombre, no el de mujer)
+  const delCatalogo = (c: RecomendacionQuiz) => {
+    const clave = nucleo(c.nombre, c.marca);
+    const mismos = catalogo.filter((x) => nucleo(x.nombre, `${x.marca} ${c.marca}`) === clave);
+    const deMujer = (g?: string) => g === 'Femenino';
+    return mismos.find((x) => deMujer(x.genero) === deMujer(c.genero)) || mismos[0] || null;
+  };
+  const fotoDe = (c: RecomendacionQuiz) =>
+    [delCatalogo(c)?.imagen, c.imagen].find((u): u is string => !!u && !fotosRotas.has(u)) || null;
   const [abierto, setAbierto] = useState(false);
   const [ocasion, setOcasion] = useState<string>('todas');
   const [estilo, setEstilo] = useState<string>('todos');
@@ -190,10 +222,10 @@ export const QuizDescubridor: React.FC<{
           </div>
           <div>
             <span style={{ fontSize: '10.5px', fontWeight: 800, color: 'var(--m3-primary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
-              Asistente Sommelier Olfativo
+              {t('El almacenero recomienda')}
             </span>
             <h4 className="m3-editorial-title" style={{ margin: '2px 0 0 0', fontSize: '1.15rem', color: 'var(--m3-text-primary)', fontWeight: 700 }}>
-              ¿No sabes qué perfume elegir? Encuentra tu fragancia en 3 pasos
+              {t('¿No sabes qué perfume elegir? Encuentra tu fragancia en 3 pasos')}
             </h4>
           </div>
         </div>
@@ -203,9 +235,9 @@ export const QuizDescubridor: React.FC<{
           style={{ fontSize: '12px', padding: '9px 18px' }}
         >
           {abierto ? (
-            <>Minimizar <ChevronUp size={15} /></>
+            <>{t('Minimizar')} <ChevronUp size={15} /></>
           ) : (
-            <><Sparkles size={15} /> Abrir Recomendador <ChevronDown size={15} /></>
+            <><Sparkles size={15} /> {t('Abrir Recomendador')} <ChevronDown size={15} /></>
           )}
         </button>
       </div>
@@ -215,7 +247,7 @@ export const QuizDescubridor: React.FC<{
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px', marginBottom: '16px' }}>
             <div>
               <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--m3-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '7px' }}>
-                1. Ocasión Principal
+                {t('1. Ocasión Principal')}
               </label>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {[
@@ -231,7 +263,7 @@ export const QuizDescubridor: React.FC<{
                     className={`m3-chip ${ocasion === o.id ? 'active' : ''}`}
                     style={{ fontSize: '11.5px', padding: '5px 11px' }}
                   >
-                    {o.label}
+                    {t(o.label)}
                   </button>
                 ))}
               </div>
@@ -239,7 +271,7 @@ export const QuizDescubridor: React.FC<{
 
             <div>
               <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--m3-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '7px' }}>
-                2. Carácter Olfativo
+                {t('2. Carácter Olfativo')}
               </label>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {[
@@ -254,7 +286,7 @@ export const QuizDescubridor: React.FC<{
                     className={`m3-chip ${estilo === e.id ? 'active' : ''}`}
                     style={{ fontSize: '11.5px', padding: '5px 11px' }}
                   >
-                    {e.label}
+                    {t(e.label)}
                   </button>
                 ))}
               </div>
@@ -262,7 +294,7 @@ export const QuizDescubridor: React.FC<{
 
             <div>
               <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--m3-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '7px' }}>
-                3. Presupuesto
+                {t('3. Presupuesto')}
               </label>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {[
@@ -277,7 +309,7 @@ export const QuizDescubridor: React.FC<{
                     className={`m3-chip ${presupuesto === p.id ? 'active' : ''}`}
                     style={{ fontSize: '11.5px', padding: '5px 11px' }}
                   >
-                    {p.label}
+                    {t(p.label)}
                   </button>
                 ))}
               </div>
@@ -293,7 +325,7 @@ export const QuizDescubridor: React.FC<{
                 onChange={(e) => setOcultarConAlergia(e.target.checked)}
               />
               <label htmlFor="chk-alergia-quiz" style={{ cursor: 'pointer', fontWeight: 600 }}>
-                Ocultar automáticamente perfumes que contengan mis {alergiasUsuario.length + notasPersonalizadas.length} alergias registradas
+                {t('Ocultar automáticamente perfumes que contengan mis {n} alergias registradas', { n: alergiasUsuario.length + notasPersonalizadas.length })}
               </label>
             </div>
           )}
@@ -302,6 +334,7 @@ export const QuizDescubridor: React.FC<{
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(235px, 1fr))', gap: '12px' }}>
             {candidatos.map((c, idx) => {
               const tieneAlergia = evaluarItemAlergia(c);
+              const foto = fotoDe(c);
               return (
                 <div
                   key={idx}
@@ -311,11 +344,48 @@ export const QuizDescubridor: React.FC<{
                   }}
                 >
                   <div>
+                    <div
+                      style={{
+                        height: '130px', borderRadius: '10px', background: '#fff', marginBottom: '10px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+                        border: '1px solid var(--m3-outline-variant)',
+                      }}
+                    >
+                      {foto ? (
+                        <img
+                          src={foto}
+                          alt={`${c.marca} ${c.nombre}`}
+                          loading="lazy"
+                          onError={() => setFotosRotas((prev) => new Set(prev).add(foto))}
+                          style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', padding: '8px' }}
+                        />
+                      ) : (
+                        <Droplets size={34} strokeWidth={1.5} style={{ color: 'var(--m3-text-tertiary)' }} aria-label={t('Sin foto')} />
+                      )}
+                    </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                       <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--m3-primary)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                         {c.marca}
                       </span>
-                      <span style={{ fontSize: '11px', fontWeight: 800, color: '#15803d', fontFamily: 'var(--font-mono)' }}>{c.precioRef}</span>
+                      {(() => {
+                        // El precio de una tienda real (el tamaño más barato que se encontró); sin él, el de referencia
+                        const real = delCatalogo(c);
+                        return real?.precioReferencia ? (
+                          <span
+                            style={{ fontSize: '11px', fontWeight: 800, color: '#15803d', fontFamily: 'var(--font-mono)', textAlign: 'right' }}
+                            title={t('Precio publicado en {tienda}', { tienda: real.tiendaMejorPrecio || t('una tienda') })}
+                          >
+                            ${real.precioReferencia.toLocaleString('es-CL')}
+                            <span style={{ display: 'block', fontSize: '9.5px', fontWeight: 700, color: 'var(--m3-text-tertiary)' }}>
+                              {[real.ml ? `${real.ml} ml` : '', real.tiendaMejorPrecio?.replace(' Beauty Store', '').replace(' Perfumes', '').replace('Farmacias ', '')].filter(Boolean).join(' · ')}
+                            </span>
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--m3-text-tertiary)', fontFamily: 'var(--font-mono)' }} title={t('Precio aproximado, sin oferta encontrada en el catálogo')}>
+                            {c.precioRef}
+                          </span>
+                        );
+                      })()}
                     </div>
                     <strong className="m3-editorial-title" style={{ fontSize: '15.5px', color: 'var(--m3-text-primary)', display: 'block' }}>
                       {c.nombre}
@@ -334,10 +404,10 @@ export const QuizDescubridor: React.FC<{
                         color: tieneAlergia ? '#dc2626' : '#15803d',
                       }}
                     >
-                      {tieneAlergia ? <><AlertTriangle size={11} /> Contiene tu alérgeno</> : <><ShieldCheck size={11} /> Compatible con tu piel</>}
+                      {tieneAlergia ? <><AlertTriangle size={11} /> {t('Probablemente contiene tu alérgeno')}</> : <><ShieldCheck size={11} /> {t('Sin tus alérgenos en sus notas')}</>}
                     </span>
                     <p style={{ fontSize: '11.5px', color: 'var(--m3-text-secondary)', margin: '7px 0', lineHeight: 1.4 }}>
-                      {c.motivo}
+                      {t(c.motivo)}
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '12px' }}>
                       {c.notasPrincipales.map((n) => (
@@ -364,13 +434,13 @@ export const QuizDescubridor: React.FC<{
                       className="m3-btn m3-btn-primary"
                       style={{ flex: 1, fontSize: '11.5px', padding: '7px 10px' }}
                     >
-                      <Search size={13} /> Cotizar
+                      <Search size={13} /> {t('Cotizar')}
                     </button>
                     <button
                       onClick={() => onGuardarEnLista(c.nombre, c.marca, c.precioNumerico, c.imagen)}
                       className="m3-btn m3-btn-tonal"
                       style={{ fontSize: '11.5px', padding: '7px 10px' }}
-                      title="Guardar en mi lista de compras"
+                      title={t('Guardar en Favoritos')}
                     >
                       <Heart size={13} />
                     </button>

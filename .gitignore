@@ -44,3 +44,15 @@ backend/logs_sistema.json
 
 # Estado del refresco diario de precios (se genera al correr el backend)
 backend/estado_refresco.json
+
+# Cuentas de usuario: correos, hashes de contraseñas, sesiones y datos personales (NUNCA SUBIR A GIT)
+backend/usuarios.json
+backend/datos_usuarios.json
+backend/clave_datos.key
+# Último resultado de cada búsqueda: un anticipo que se rehace solo al buscar
+backend/ultimas_busquedas.json
+backend/reviews_comunidad.json
+backend/*.tmp
+# Detalle de cada producto de Falabella ya leído: un caché que el scraper rehace solo
+backend/detalles_falabella.json
+backend/detalles_falabella.json.*.tmp

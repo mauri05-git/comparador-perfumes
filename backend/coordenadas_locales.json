@@ -1,0 +1,142 @@
+{
+  "DBS Apumanque | Avenida Manquehue Sur 31": {
+    "lat": -33.4098751,
+    "lng": -70.567896,
+    "comuna": "Las Condes"
+  },
+  "DBS Arauco Maipú | Avenida Américo Vespucio 399": {
+    "lat": -33.4824417,
+    "lng": -70.7512116,
+    "comuna": "Maipú"
+  },
+  "DBS Arauco Premium Outlet Buenaventura | San Ignacio 300": {
+    "lat": -33.3320958,
+    "lng": -70.7039596,
+    "comuna": "Santiago"
+  },
+  "DBS Cenco Alto las Condes | Avenida Presidente Kennedy 9001": {
+    "lat": -33.3909054,
+    "lng": -70.5460816,
+    "comuna": "Vitacura"
+  },
+  "DBS Cenco Costanera Center | Avenida Andres Bello 2447": {
+    "lat": -33.417987,
+    "lng": -70.6064246,
+    "comuna": "Providencia"
+  },
+  "DBS Cenco El Llano | Avenida El Llano Subercaseaux 3519": {
+    "lat": -33.4860348,
+    "lng": -70.6514685,
+    "comuna": "San Miguel"
+  },
+  "DBS Cenco Florida | Avenida Vicuña Mackenna 6100": {
+    "lat": -33.5104156,
+    "lng": -70.6065722,
+    "comuna": "La Florida"
+  },
+  "DBS Cenco La Reina | Avenida Francisco Bilbao 8750": {
+    "lat": -33.4281735,
+    "lng": -70.5410097,
+    "comuna": "Las Condes"
+  },
+  "DBS Cenco Portal La Dehesa | Avenida La Dehesa 1445": {
+    "lat": -33.357887,
+    "lng": -70.5156055,
+    "comuna": "Lo Barnechea"
+  },
+  "DBS Easton Outlet Mall | Pte. Eduardo Frei Montalva 9709": {
+    "lat": -33.3351689,
+    "lng": -70.71247,
+    "comuna": "Santiago"
+  },
+  "DBS Mall Barrio Independencia | Avenida Independencia 565": {
+    "lat": -33.4242119,
+    "lng": -70.6538024,
+    "comuna": "Independencia"
+  },
+  "DBS Mall Paseo Quilín | Calle Mar Tirreno 3349": {
+    "lat": -33.4875496,
+    "lng": -70.5782683,
+    "comuna": "Peñalolén"
+  },
+  "DBS MallPlaza Egaña | Avenida Larraín 5862": {
+    "lat": -33.4532337,
+    "lng": -70.5696475,
+    "comuna": "La Reina"
+  },
+  "DBS MallPlaza Los Domínicos | Avenida Padre Hurtado Sur 785": {
+    "lat": -33.4138352,
+    "lng": -70.5404192,
+    "comuna": "Las Condes"
+  },
+  "DBS MallPlaza Norte | Avenida Américo Vespucio 1737": {
+    "lat": -33.3659018,
+    "lng": -70.6787006,
+    "comuna": "Huechuraba"
+  },
+  "DBS MallPlaza Oeste | Avenida Americo Vespucio 1501": {
+    "lat": -33.5178385,
+    "lng": -70.7173692,
+    "comuna": "Cerrillos"
+  },
+  "DBS MallPlaza Sur | Avenida Presidente Jorge Allessandri 20040": {
+    "lat": -33.6324202,
+    "lng": -70.7128904,
+    "comuna": "San Bernardo"
+  },
+  "DBS MallPlaza Tobalaba | Avenida Camilo Henríquez 3692": {
+    "lat": -33.5693029,
+    "lng": -70.5574865,
+    "comuna": "Puente Alto"
+  },
+  "DBS MallPlaza Vespucio | Avenida Vicuña Mackenna Oriente 7110": {
+    "lat": -33.5175543,
+    "lng": -70.5983734,
+    "comuna": "La Florida"
+  },
+  "DBS Parque Arauco | Avenida Kennedy 5413": {
+    "lat": -33.4023225,
+    "lng": -70.5772908,
+    "comuna": "Las Condes"
+  },
+  "DBS Providencia | Avenida Providencia 2230": {
+    "lat": -33.4214467,
+    "lng": -70.6095571,
+    "comuna": "Providencia"
+  },
+  "DBS Vivo Imperio | San Antonio 236": {
+    "lat": -33.4398672,
+    "lng": -70.6486837,
+    "comuna": "Santiago"
+  },
+  "DBS Vivo Los Trapenses | Avenida José Alcalde Délano 10533": {
+    "lat": -33.3569011,
+    "lng": -70.5401701,
+    "comuna": "Lo Barnechea"
+  },
+  "Alisha Oficina Nueva Providencia | Avenida Nueva Providencia 2155": {
+    "lat": -33.4233062,
+    "lng": -70.6098465,
+    "comuna": "Providencia"
+  },
+  "Alisha Mall Plaza Vespucio | Mall Plaza Vespucio": {
+    "lat": -33.5175543,
+    "lng": -70.5983734,
+    "comuna": "La Florida"
+  },
+  "Alisha Mall Cenco Costanera | Mall Cenco Costanera": {
+    "lat": -33.417987,
+    "lng": -70.6064246,
+    "comuna": "Providencia"
+  },
+  "Alisha Metro Los Leones | Avenida Nueva Providencia 2224": {
+    "lat": -33.4273218,
+    "lng": -70.6166605,
+    "comuna": "Providencia"
+  },
+  "Alisha Paseo Ahumada | Paseo Ahumada 152": {
+    "lat": -33.4408064,
+    "lng": -70.6508065,
+    "comuna": "Santiago"
+  }
+}

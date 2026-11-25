@@ -4,6 +4,9 @@ import json
 import sys
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
+import time
+from datetime import date, timedelta
 
 # ─────────────────────────────────────────────
 #  HEADERS comunes
@@ -65,6 +68,75 @@ STOCK_SI = "En Stock"
 STOCK_NO = "Agotado"
 STOCK_SIN_VERIFICAR = "Sin verificar"
 
+# Lo que no salió bien en esta búsqueda y conviene anotar en el registro (Falabella respondiendo 403, por ejemplo).
+# Sin esto un bloqueo se veía como "la tienda no publica nada".
+AVISOS = []
+
+# Detalle de cada producto de Falabella ya leído (ingredientes, notas, familia y tamaño de cada variante). Casi nunca
+# cambia, y volver a pedir la página en cada búsqueda era la mayor parte de las consultas que hacen que Falabella
+# bloquee por unos minutos.
+ARCHIVO_DETALLES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "detalles_falabella.json")
+DIAS_DETALLE = 30
+
+
+def id_producto_falabella(url):
+    m = re.search(r"/product/(\d+)", url or "")
+    return m.group(1) if m else None
+
+
+def leer_detalles():
+    try:
+        with open(ARCHIVO_DETALLES, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def detalle_guardado(detalles, url):
+    """El detalle guardado del producto si tiene menos de DIAS_DETALLE días."""
+    entrada = detalles.get(id_producto_falabella(url) or "")
+    if not entrada:
+        return None
+    try:
+        if date.fromisoformat(entrada["fecha"]) < date.today() - timedelta(days=DIAS_DETALLE):
+            return None
+    except Exception:
+        return None
+    return entrada
+
+
+def guardar_detalles(nuevos):
+    """Junta lo nuevo con lo que hay en disco y reemplaza el archivo de una vez: otra búsqueda puede estar
+    escribiéndolo al mismo tiempo (el refresco diario corre dos a la vez)."""
+    if not nuevos:
+        return
+    try:
+        detalles = leer_detalles()
+        detalles.update(nuevos)
+        temporal = f"{ARCHIVO_DETALLES}.{os.getpid()}.tmp"
+        with open(temporal, "w", encoding="utf-8") as f:
+            json.dump(detalles, f, ensure_ascii=False)
+        for _ in range(3):
+            try:
+                os.replace(temporal, ARCHIVO_DETALLES)
+                break
+            except PermissionError:
+                time.sleep(0.2)  # Windows: el otro proceso lo tiene abierto un instante
+    except Exception:
+        pass
+
+
+def url_imagen(img_el):
+    """URL real de la foto. Las tiendas cargan las fotos al hacer scroll: en `src` dejan un GIF
+    transparente (data:...) y la foto va en data-src, data-original o srcset."""
+    if not img_el:
+        return None
+    srcset = (img_el.get("srcset") or "").split(",")[0].strip().split(" ")[0]
+    for valor in (img_el.get("data-src"), img_el.get("data-original"), srcset, img_el.get("src")):
+        if valor and not valor.startswith("data:"):
+            return valor
+    return None
+
 
 def stock_falabella(datos_pdp, sku_id):
     producto = datos_pdp.get("props", {}).get("pageProps", {}).get("productData") or {}
@@ -78,15 +150,99 @@ def stock_falabella(datos_pdp, sku_id):
     return STOCK_SI
 
 
+def detalle_falabella(datos_pdp):
+    """Ingredientes y notas que Falabella publica en las especificaciones del producto."""
+    producto = datos_pdp.get("props", {}).get("pageProps", {}).get("productData") or {}
+    specs = {
+        limpiar_texto(s.get("name")): (s.get("value") or "").replace("\xa0", " ").strip()
+        for s in (producto.get("attributes") or {}).get("specifications") or []
+    }
+    detalle = {
+        "ingredientes": specs.get("ingredientes"),
+        "notasTienda": specs.get("notas aromaticas"),
+        # "Frutal,Floral": la familia según la tienda, que ayuda a armar la ficha de un perfume que la IA no conoce
+        "familiaTienda": specs.get("fragancia perfume"),
+    }
+    return {k: v for k, v in detalle.items() if v}
+
+
+def precio_falabella(precios_raw):
+    """Precio vigente (el no tachado) de una lista de precios de Falabella."""
+    vigente = next((p for p in precios_raw or [] if not p.get("crossed", True)), (precios_raw or [None])[0])
+    precio_str = ((vigente or {}).get("price") or [None])[0]
+    if not precio_str:
+        return None
+    try:
+        return float(str(precio_str).replace(".", "").replace(",", "."))
+    except ValueError:
+        return None
+
+
+def normalizar_tamano(texto):
+    """"30 ML" -> "30ml", como lo escriben las otras tiendas; None si no trae un número."""
+    texto = (texto or "").strip()
+    return re.sub(r"\s+", "", texto).lower() if re.search(r"\d", texto) else None
+
+
+def tamanos_falabella(item):
+    """Tamaños que el listado ofrece como opciones de un mismo producto ("30 ML", "50 ML", "90 ML"), cada uno con su
+    precio, su enlace y su disponibilidad. El listado muestra el producto una sola vez, con el precio más bajo y sin
+    decir de qué tamaño es: sin esto la oferta quedaba "Tamaño sin datos"."""
+    for v in item.get("variants") or []:
+        if v.get("type") != "SIZES":
+            continue
+        tamanos = []
+        for o in v.get("options") or []:
+            tamano = normalizar_tamano(o.get("size") or o.get("value"))
+            precio = precio_falabella(o.get("prices"))
+            if not tamano or not precio or not o.get("url"):
+                continue
+            tamanos.append({
+                "tamano": tamano,
+                "precio": precio,
+                "url": o["url"],
+                "sku": o.get("variant") or o.get("offeringId"),
+                "stock": STOCK_SI if o.get("isPurchaseable") else STOCK_NO if o.get("isPurchaseable") is False else STOCK_SIN_VERIFICAR,
+                "orden": o.get("sizeOrder") or 0,
+            })
+        return sorted(tamanos, key=lambda t: t["orden"])
+    return []
+
+
+def con_tamano(nombre, tamano):
+    """Agrega el tamaño al final del nombre ("... Over Red - YVES SAINT LAURENT 30ml"), si no lo trae. Al final y no
+    antes de la marca: al limpiar un título, lo que viene después del tamaño se descarta, y se perdía la marca."""
+    if not tamano or re.search(r"\d\s*ml\b", nombre, re.I):
+        return nombre
+    return f"{nombre} {tamano}"
+
+
+def tamano_de_variante(datos_pdp, sku_id):
+    """Tamaño de la variante cotizada, leído de la ficha del producto."""
+    producto = datos_pdp.get("props", {}).get("pageProps", {}).get("productData") or {}
+    for v in producto.get("variants") or []:
+        if str(v.get("id")) == str(sku_id):
+            return normalizar_tamano((v.get("attributes") or {}).get("size"))
+    return None
+
+
 def consultar_stock_falabella(url, sku_id):
+    """(stock, detalle) leyendo la ficha del producto; el detalle sale de la misma página, sin otra consulta."""
     try:
         resp = requests.get(url, headers=HEADERS, timeout=6)
         if resp.status_code != 200:
-            return STOCK_SIN_VERIFICAR
+            return STOCK_SIN_VERIFICAR, {"_estado": resp.status_code}
         nd = BeautifulSoup(resp.text, "html.parser").find("script", id="__NEXT_DATA__")
-        return stock_falabella(json.loads(nd.string), sku_id) if nd else STOCK_SIN_VERIFICAR
+        if not nd:
+            return STOCK_SIN_VERIFICAR, {"_estado": "sin datos"}
+        datos = json.loads(nd.string)
+        detalle = detalle_falabella(datos)
+        tamano = tamano_de_variante(datos, sku_id)
+        if tamano:
+            detalle["_tamano"] = tamano
+        return stock_falabella(datos, sku_id), detalle
     except Exception:
-        return STOCK_SIN_VERIFICAR
+        return STOCK_SIN_VERIFICAR, {"_estado": "sin respuesta"}
 
 
 def stock_dbs(item):
@@ -190,16 +346,19 @@ def buscar_falabella(nombre_perfume):
         resp.encoding = "utf-8"
 
         if resp.status_code != 200:
+            AVISOS.append(f"Falabella respondió {resp.status_code} a la búsqueda: esta vez no hay ofertas de Falabella")
             return resultados
 
         sopa = BeautifulSoup(resp.text, "html.parser")
         nd = sopa.find("script", id="__NEXT_DATA__")
         if not nd:
+            AVISOS.append("Falabella respondió la búsqueda sin datos: esta vez no hay ofertas de Falabella")
             return resultados
 
         data = json.loads(nd.string)
         items = data.get("props", {}).get("pageProps", {}).get("results", [])
         skus_vistos = set()
+        productos = []  # url y variante de cada producto, para leer su ficha
 
         for item in items[:12]:
             # Falabella repite productos en el listado (patrocinados)
@@ -218,32 +377,30 @@ def buscar_falabella(nombre_perfume):
             url_prod = item.get("url", "")
             imagen = (item.get("mediaUrls") or [None])[0]
 
-            precio = None
-            precios_raw = item.get("prices", [])
-            for p in precios_raw:
-                if not p.get("crossed", True):
-                    precio_lista = p.get("price", [])
-                    precio_str = precio_lista[0] if precio_lista else None
-                    if precio_str:
-                        try:
-                            precio = float(str(precio_str).replace(".", "").replace(",", "."))
-                        except ValueError:
-                            pass
-                    break
-
-            if precio is None and precios_raw:
-                precio_lista = precios_raw[0].get("price", [])
-                precio_str = precio_lista[0] if precio_lista else None
-                if precio_str:
-                    try:
-                        precio = float(str(precio_str).replace(".", "").replace(",", "."))
-                    except ValueError:
-                        pass
+            precio = precio_falabella(item.get("prices", []))
 
             nombre_limpio = f"{nombre} - {brand}" if brand and brand.lower() not in nombre.lower() else nombre
             nombre_limpio = nombre_limpio.encode("utf-8", "ignore").decode("utf-8")
 
-            if es_producto_relevante(nombre_limpio, nombre_perfume, precio):
+            if not es_producto_relevante(nombre_limpio, nombre_perfume, precio):
+                continue
+            grupo = len(productos)
+            tamanos = tamanos_falabella(item)
+            if tamanos:
+                # Una oferta por tamaño, cada una con su precio y su enlace; el stock viene en el listado
+                for t in tamanos:
+                    resultados.append({
+                        "tienda": "Falabella",
+                        "nombre": con_tamano(nombre_limpio, t["tamano"]),
+                        "precio": t["precio"],
+                        "moneda": "CLP",
+                        "stock": t["stock"],
+                        "url": t["url"],
+                        "imagen": imagen,
+                        "_grupo": grupo,
+                    })
+                productos.append({"url": tamanos[0]["url"], "sku": tamanos[0]["sku"], "con_tamanos": True})
+            else:
                 resultados.append({
                     "tienda": "Falabella",
                     "nombre": nombre_limpio,
@@ -252,21 +409,64 @@ def buscar_falabella(nombre_perfume):
                     "stock": STOCK_SIN_VERIFICAR,
                     "url": url_prod,
                     "imagen": imagen,
-                    "_sku": item.get("skuId"),
+                    "_grupo": grupo,
                 })
-                if len(resultados) >= 4:
-                    break
+                productos.append({"url": url_prod, "sku": item.get("skuId"), "con_tamanos": False})
+            if len(productos) >= 4:
+                break
 
-        # El listado de búsqueda no trae stock; se consulta la ficha de cada producto en paralelo
+        # El listado no trae el detalle (ingredientes, notas) ni, en un producto sin tamaños, el stock y el tamaño:
+        # se lee la ficha de cada producto en paralelo, una vez por producto, y el detalle vale para todos sus tamaños
+        # Un producto con tamaños ya trae su stock en el listado: si su detalle se leyó hace poco, no se vuelve a pedir
+        # la página. Uno sin tamaños sí, porque de ahí sale su stock.
+        guardados = leer_detalles()
+        def consultar(p):
+            previo = detalle_guardado(guardados, p["url"])
+            if previo and p["con_tamanos"]:
+                return STOCK_SIN_VERIFICAR, dict(previo.get("detalle") or {}), True
+            stock, detalle = consultar_stock_falabella(p["url"], p["sku"])
+            if "_estado" in detalle and previo:
+                # La página no respondió: vale el detalle que ya se tenía
+                return stock, {**(previo.get("detalle") or {}), "_tamano": previo.get("tamano"), "_estado": detalle["_estado"]}, True
+            return stock, detalle, False
+
         with ThreadPoolExecutor(max_workers=4) as executor:
-            stocks = executor.map(lambda r: consultar_stock_falabella(r["url"], r["_sku"]), resultados)
-            for r, stock in zip(resultados, stocks):
+            consultas = list(executor.map(consultar, productos))
+
+        nuevos, fallidas, estados = {}, 0, set()
+        for prod, (stock, detalle, de_guardado) in zip(productos, consultas):
+            if "_estado" in detalle:
+                fallidas += 1
+                estados.add(str(detalle["_estado"]))
+            elif not de_guardado and id_producto_falabella(prod["url"]):
+                nuevos[id_producto_falabella(prod["url"])] = {
+                    "fecha": date.today().isoformat(),
+                    "detalle": {k: v for k, v in detalle.items() if not k.startswith("_")},
+                    "tamano": detalle.get("_tamano"),
+                }
+        guardar_detalles(nuevos)
+        if fallidas:
+            AVISOS.append(
+                f"Falabella no entregó {fallidas} de {len(productos)} páginas de producto ({', '.join(sorted(estados))}): "
+                "faltan sus notas e ingredientes"
+            )
+
+        for r in resultados:
+            prod = productos[r["_grupo"]]
+            stock, detalle, de_guardado = consultas[r["_grupo"]]
+            tamano = detalle.get("_tamano")
+            r.update({k: v for k, v in detalle.items() if not k.startswith("_")})
+            if "_estado" in detalle and not de_guardado:
+                # Para que la app diga por qué falta la ficha, en vez de "la tienda no publica notas"
+                r["detalleNoDisponible"] = True
+            if not prod["con_tamanos"]:
                 r["stock"] = stock
+                r["nombre"] = con_tamano(r["nombre"], tamano)
     except Exception:
         pass
 
     for r in resultados:
-        r.pop("_sku", None)
+        r.pop("_grupo", None)
     return resultados
 
 
@@ -295,7 +495,7 @@ def buscar_dbs(nombre_perfume):
             if not nombre and img_el:
                 nombre = img_el.get("alt", "")
 
-            img = img_el.get("data-src") or img_el.get("src") if img_el else None
+            img = url_imagen(img_el)
             href = link_el.get("href") if link_el else ""
 
             precio_val = None
@@ -358,6 +558,8 @@ def buscar_alisha(nombre_perfume):
                     "stock": stock_alisha(p),
                     "url": "https://alishaperfumes.cl" + (p.get("url") or "").split("?")[0],
                     "imagen": p.get("image"),
+                    # Alisha describe las notas del perfume: sirve de fuente para los que la IA no conoce
+                    "descripcionTienda": re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", p.get("body") or "")).strip()[:1200],
                 })
                 if len(resultados) >= 4:
                     break
@@ -408,7 +610,7 @@ def buscar_ahumada(nombre_perfume):
                     except Exception:
                         pass
 
-            img = img_el.get("src") if img_el else None
+            img = url_imagen(img_el)
 
             # FILTRO ESTRICTO: No agregar si es crema, toallitas o si no es relevante
             if title and price_val and es_producto_relevante(title, nombre_perfume, price_val):
@@ -429,6 +631,87 @@ def buscar_ahumada(nombre_perfume):
     return resultados
 
 
+# ─────────────────────────────────────────────
+#  RE-COTIZACIÓN DIRECTA — lee la página de un producto ya conocido
+# ─────────────────────────────────────────────
+def precio_desde_texto(texto):
+    m = re.search(r"\d[\d\.]*", str(texto or ""))
+    return float(m.group(0).replace(".", "")) if m else None
+
+
+def cotizar_falabella_pdp(datos_pdp, url):
+    producto = datos_pdp.get("props", {}).get("pageProps", {}).get("productData") or {}
+    variantes = producto.get("variants") or []
+    id_variante = str(producto.get("currentVariant") or producto.get("primaryVariantId") or "")
+    variante = next((v for v in variantes if str(v.get("id")) == id_variante), variantes[0] if variantes else None)
+    if not variante:
+        return None
+    precios = variante.get("prices") or []
+    vigente = next((p for p in precios if not p.get("crossed", True)), precios[0] if precios else None)
+    precio = precio_desde_texto((vigente or {}).get("price", [None])[0])
+    if not precio:
+        return None
+    return {
+        "tienda": "Falabella",
+        "nombre": variante.get("name") or producto.get("name"),
+        "precio": precio,
+        "stock": stock_falabella(datos_pdp, variante.get("id")),
+        "url": url,
+        **detalle_falabella(datos_pdp),
+    }
+
+
+def cotizar_dbs_pdp(sopa, url):
+    precio_el = sopa.select_one("meta[property='product:price:amount']") or sopa.select_one("[data-price-type=finalPrice]")
+    if not precio_el:
+        return None
+    precio = precio_desde_texto(precio_el.get("content") or precio_el.get("data-price-amount"))
+    if not precio:
+        return None
+    titulo = sopa.select_one("h1")
+    agotado = sopa.select_one(".stock.unavailable") is not None
+    con_carrito = sopa.select_one("#product-addtocart-button") is not None
+    return {
+        "tienda": "DBS Beauty Store",
+        "nombre": titulo.get_text(strip=True) if titulo else "",
+        "precio": precio,
+        "stock": STOCK_NO if agotado else (STOCK_SI if con_carrito else STOCK_SIN_VERIFICAR),
+        "url": url,
+    }
+
+
+def cotizar_alisha_js(producto, url):
+    # El endpoint .js de Shopify entrega el precio en centavos
+    if producto.get("price") is None:
+        return None
+    return {
+        "tienda": "Alisha Perfumes",
+        "nombre": re.sub(r"[^\x00-\x7F]+", " ", producto.get("title") or "").strip(),
+        "precio": float(producto["price"]) / 100,
+        "stock": stock_alisha(producto),
+        "url": url,
+    }
+
+
+def cotizar_url(url):
+    """Precio y stock actuales de un producto conocido, leyendo su propia página. None si no se puede."""
+    try:
+        if "falabella.com" in url:
+            resp = requests.get(url, headers=HEADERS, timeout=10)
+            nd = BeautifulSoup(resp.text, "html.parser").find("script", id="__NEXT_DATA__") if resp.status_code == 200 else None
+            return cotizar_falabella_pdp(json.loads(nd.string), url) if nd else None
+        if "dbs.cl" in url:
+            resp = requests.get(url, headers=HEADERS, timeout=10)
+            return cotizar_dbs_pdp(BeautifulSoup(resp.text, "html.parser"), url) if resp.status_code == 200 else None
+        if "alishaperfumes.cl" in url:
+            resp = requests.get(url.split("?")[0] + ".js", headers=HEADERS, timeout=10)
+            return cotizar_alisha_js(resp.json(), url) if resp.status_code == 200 else None
+        # shortcut: Ahumada no tiene re-cotización directa; el catálogo no guarda ofertas suyas hoy
+    except Exception:
+        pass
+    return None
+
+
 def es_busqueda_no_perfume(query):
     if not query:
         return True
@@ -446,7 +729,7 @@ def es_busqueda_no_perfume(query):
 # ─────────────────────────────────────────────
 #  FUNCIÓN PRINCIPAL — Ejecuta las 4 tiendas en paralelo
 # ─────────────────────────────────────────────
-def buscar_en_todas(nombre_perfume):
+def buscar_en_todas(nombre_perfume, al_terminar_tienda=None):
     # Si la consulta del usuario no es de perfumería, abortar inmediatamente
     if es_busqueda_no_perfume(nombre_perfume):
         return []
@@ -461,6 +744,8 @@ def buscar_en_todas(nombre_perfume):
                 resultados = futuro.result()
                 if resultados:
                     todos.extend(resultados)
+                    if al_terminar_tienda:
+                        al_terminar_tienda(resultados)
             except Exception:
                 pass
 
@@ -473,7 +758,17 @@ def buscar_en_todas(nombre_perfume):
 #  ENTRY POINT (llamado por Deno)
 # ─────────────────────────────────────────────
 if __name__ == "__main__":
-    nombre_perfume = " ".join(sys.argv[1:]) if len(sys.argv) > 1 else "Acqua Di Gio"
-    resultados = buscar_en_todas(nombre_perfume)
+    if len(sys.argv) == 3 and sys.argv[1] == "--url":
+        print(json.dumps(cotizar_url(sys.argv[2])))
+        sys.exit(0)
+    # --por-tienda: una línea JSON por tienda apenas responde (para mostrar ofertas sin esperar a la más lenta)
+    # y al final la lista completa
+    por_tienda = len(sys.argv) > 1 and sys.argv[1] == "--por-tienda"
+    palabras = sys.argv[2:] if por_tienda else sys.argv[1:]
+    nombre_perfume = " ".join(palabras) if palabras else "Acqua Di Gio"
     # ensure_ascii evita que la consola de Windows corrompa tildes al pasar el JSON a Deno
-    print(json.dumps(resultados))
+    if por_tienda:
+        resultados = buscar_en_todas(nombre_perfume, lambda ofertas: print(json.dumps({"ofertas": ofertas}), flush=True))
+        print(json.dumps({"todas": resultados, "avisos": AVISOS}))
+    else:
+        print(json.dumps(buscar_en_todas(nombre_perfume)))

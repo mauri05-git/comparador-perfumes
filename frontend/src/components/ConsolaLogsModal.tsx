@@ -9,6 +9,7 @@ import {
   Cpu,
   Clock,
 } from 'lucide-react';
+import { t, tServidor } from '../i18n.ts';
 
 export interface EntradaLogSistema {
   id: string;
@@ -44,6 +45,7 @@ export const ConsolaLogsModal: React.FC<{
   const [stats, setStats] = useState<EstadisticasBackend | null>(null);
   const [filtroNivel, setFiltroNivel] = useState<string>('TODOS');
   const [cargando, setCargando] = useState(false);
+  const [avisoLimpiar, setAvisoLimpiar] = useState<string | null>(null);
 
   const cargarLogsServidor = async () => {
     setCargando(true);
@@ -80,8 +82,11 @@ export const ConsolaLogsModal: React.FC<{
 
   const limpiarTodo = async () => {
     onLimpiarLogsCliente();
+    setAvisoLimpiar(null);
     try {
-      await fetch(`${apiBase}/api/logs`, { method: 'DELETE' });
+      const resp = await fetch(`${apiBase}/api/logs`, { method: 'DELETE', credentials: 'include' });
+      // Sin permiso se borran solo los eventos de este navegador; los del servidor quedan
+      if (!resp.ok) setAvisoLimpiar(tServidor((await resp.json().catch(() => ({}))).error) || t('No se pudo borrar el registro del servidor.'));
       await cargarLogsServidor();
     } catch {
       setLogsBackend([]);
@@ -98,7 +103,7 @@ export const ConsolaLogsModal: React.FC<{
 
   return (
     <div className="m3-modal-backdrop" onClick={alCerrar}>
-      <div className="m3-modal-card" style={{ maxWidth: '800px' }} onClick={(e) => e.stopPropagation()}>
+      <div className="m3-modal-card" role="dialog" aria-modal="true" style={{ maxWidth: '800px' }} onClick={(e) => e.stopPropagation()}>
         <div className="m3-modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '11px', background: 'var(--m3-primary-container)', color: 'var(--m3-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -106,14 +111,14 @@ export const ConsolaLogsModal: React.FC<{
             </div>
             <div>
               <h3 className="m3-editorial-title" style={{ margin: 0, fontSize: '1.25rem', color: 'var(--m3-text-primary)', fontWeight: 700 }}>
-                Consola de Logs y Telemetría del Sistema
+                {t('Registro del sistema')}
               </h3>
               <span style={{ fontSize: '12px', color: 'var(--m3-text-secondary)' }}>
-                Trazabilidad en milisegundos (ms) de scraping paralelo, motor Gemini/Azure y caché en memoria.
+                {t('Trazabilidad en milisegundos (ms) de scraping paralelo, motor Gemini/Azure y caché en memoria.')}
               </span>
             </div>
           </div>
-          <button onClick={alCerrar} className="m3-search-clear" title="Cerrar">
+          <button onClick={alCerrar} className="m3-search-clear" title={t('Cerrar')}>
             <X size={20} />
           </button>
         </div>
@@ -124,13 +129,13 @@ export const ConsolaLogsModal: React.FC<{
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
                 gap: '10px',
               }}
             >
               <div style={{ background: 'var(--m3-surface-container-low)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--m3-outline-variant)' }}>
                 <span style={{ fontSize: '10.5px', fontWeight: 700, color: 'var(--m3-text-tertiary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Search size={12} /> Consultas
+                  <Search size={12} /> {t('Consultas')}
                 </span>
                 <div style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--m3-primary)', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                   {stats.total_busquedas + stats.total_comparaciones}
@@ -148,7 +153,7 @@ export const ConsolaLogsModal: React.FC<{
 
               <div style={{ background: 'var(--m3-surface-container-low)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--m3-outline-variant)' }}>
                 <span style={{ fontSize: '10.5px', fontWeight: 700, color: 'var(--m3-text-tertiary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Cpu size={12} /> Inferencias IA
+                  <Cpu size={12} /> {t('Inferencias IA')}
                 </span>
                 <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#16a34a', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                   {stats.llamadas_ia_exitosas}
@@ -157,7 +162,7 @@ export const ConsolaLogsModal: React.FC<{
 
               <div style={{ background: 'var(--m3-surface-container-low)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--m3-outline-variant)' }}>
                 <span style={{ fontSize: '10.5px', fontWeight: 700, color: 'var(--m3-text-tertiary)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <Clock size={12} /> Modelo Activo
+                  <Clock size={12} /> {t('Modelo Activo')}
                 </span>
                 <div style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--m3-text-primary)', fontFamily: 'var(--font-mono)', marginTop: '5px', wordBreak: 'break-all' }}>
                   {stats.ultimo_modelo_ia}
@@ -188,17 +193,23 @@ export const ConsolaLogsModal: React.FC<{
                 className="m3-btn m3-btn-tonal"
                 style={{ fontSize: '11px', padding: '6px 12px' }}
               >
-                <RefreshCw size={13} /> {cargando ? 'Actualizando...' : 'Refrescar'}
+                <RefreshCw size={13} /> {cargando ? t('Actualizando...') : t('Refrescar')}
               </button>
               <button
                 onClick={limpiarTodo}
                 className="m3-btn m3-btn-tonal"
                 style={{ fontSize: '11px', padding: '6px 12px', color: '#dc2626' }}
               >
-                <Trash2 size={13} /> Limpiar
+                <Trash2 size={13} /> {t('Limpiar')}
               </button>
             </div>
           </div>
+
+          {avisoLimpiar && (
+            <div role="alert" style={{ fontSize: '12px', fontWeight: 600, color: 'var(--m3-error)', margin: '0 0 10px' }}>
+              {avisoLimpiar} {t('Se borraron solo los eventos de este navegador.')}
+            </div>
+          )}
 
           {/* Terminal de eventos */}
           <div
@@ -219,7 +230,7 @@ export const ConsolaLogsModal: React.FC<{
           >
             {logsFiltrados.length === 0 ? (
               <div style={{ color: '#64748b', textAlign: 'center', padding: '28px' }}>
-                Sin eventos registrados para este filtro. Ejecuta una búsqueda o comparación para observar la telemetría.
+                {t('Sin eventos registrados para este filtro. Ejecuta una búsqueda o comparación para observar la telemetría.')}
               </div>
             ) : (
               logsFiltrados.map((log) => {
@@ -286,7 +297,7 @@ export const ConsolaLogsModal: React.FC<{
 
         <div className="m3-modal-footer">
           <button onClick={alCerrar} className="m3-btn m3-btn-primary">
-            Cerrar Consola
+            {t('Cerrar Consola')}
           </button>
         </div>
       </div>
